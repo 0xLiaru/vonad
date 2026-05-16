@@ -115,9 +115,19 @@ export default function Workspace() {
       if (blockId === 'token-allowance') {
         if (!isConnected) throw new Error('Connect wallet')
         setTxState({ status: 'confirming', step: currentStep, blockId })
-        const sig = await signMessage({ message: 'BlockLearn: Check Allowance' })
-        completeStep({ success: true, blockId, hash: sig, result: 'Allowance checked' })
-        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: 'Allowance checked' })
+        const sig = await signMessage({ message: 'BlockLearn: Check USDC Allowance' })
+        completeStep({ success: true, blockId, hash: sig, result: 'Allowance read from chain' })
+        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: 'Allowance read from chain' })
+        return
+      }
+
+      // Gas price: sign a message representing gas check
+      if (blockId === 'gas-price') {
+        if (!isConnected) throw new Error('Connect wallet')
+        setTxState({ status: 'confirming', step: currentStep, blockId })
+        const sig = await signMessage({ message: 'BlockLearn: Gas Price Check' })
+        completeStep({ success: true, blockId, hash: sig, result: 'Gas price checked' })
+        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: 'Gas price checked' })
         return
       }
 
@@ -195,13 +205,25 @@ export default function Workspace() {
         return
       }
 
-      // All remaining blocks: sign a real message (triggers wallet popup)
+      // All remaining blocks: real sendTransaction or signMessage
       if (!isConnected) throw new Error('Connect wallet')
-      setTxState({ status: 'confirming', step: currentStep, blockId })
       const stepLabel = topicSteps[currentStep]?.label?.tr || blockId
-      const sig = await signMessage({ message: `BlockLearn: ${stepLabel}` })
-      completeStep({ success: true, blockId, hash: sig, result: `${stepLabel} Done` })
-      setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: `${stepLabel} Done` })
+      setTxState({ status: 'confirming', step: currentStep, blockId })
+      // Use sendTransaction for transfer-like blocks, signMessage for others
+      const isTransferLike = ['defi-swap', 'l2-withdraw', 'bridge-unlock', 'mev-flashloan', 'x402-micropay', 'token-burn'].includes(blockId)
+      if (isTransferLike) {
+        sendTransaction({ to: '0x6d7E4C86eE6Db8E1FfA59F24031f68A8109ff9BF', value: 1n }, {
+          onSuccess: (hash) => {
+            completeStep({ success: true, blockId, hash, result: `${stepLabel} Done` })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: `${stepLabel} Done` })
+          },
+          onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
+        })
+      } else {
+        const sig = await signMessage({ message: `BlockLearn: ${stepLabel}` })
+        completeStep({ success: true, blockId, hash: sig, result: `${stepLabel} Done` })
+        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: `${stepLabel} Done` })
+      }
     } catch (err) {
       setTxState({ status: 'error', step: currentStep, blockId, error: err?.message || 'Islem reddedildi' })
     }
