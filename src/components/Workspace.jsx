@@ -20,7 +20,7 @@ export default function Workspace() {
   const [txState, setTxState] = useState(null) // { status: 'pending'|'confirming'|'done'|'error', hash?, step? }
   const [wrongDrop, setWrongDrop] = useState(null)
 
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
   const { connect, connectors } = useConnect()
   const { signMessage } = useSignMessage()
   const { sendTransaction } = useSendTransaction()
@@ -58,6 +58,11 @@ export default function Workspace() {
     try {
       // Different actions per block type
       if (blockId === 'wallet-connect') {
+        if (isConnected) {
+          completeStep({ success: true, blockId, result: 'Cuzdan zaten bagli' })
+          setTxState({ status: 'done', step: currentStep, blockId, result: 'Cuzdan zaten bagli' })
+          return
+        }
         const connector = connectors[0]
         if (!connector) throw new Error('Cuzdan bulunamadi')
         await connect({ connector })
@@ -103,9 +108,82 @@ export default function Workspace() {
         return
       }
 
-      // Generic simulation for other blocks
-      completeStep({ success: true, blockId, result: 'Tamamlandi' })
-      setTxState({ status: 'done', step: currentStep, blockId, result: 'Tamamlandi' })
+      // Token actions (USDC on Monad testnet)
+      if (blockId === 'token-approve') {
+        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        setTxState({ status: 'confirming', step: currentStep, blockId })
+        writeContract({
+          address: '0xf817257fed379853cDe0fa4F97AB987181B1e5Ea',
+          abi: [{ type: 'function', name: 'approve', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],
+          functionName: 'approve',
+          args: ['0xf817257fed379853cDe0fa4F97AB987181B1e5Ea', parseEther('100')],
+        }, {
+          onSuccess: (hash) => {
+            completeStep({ success: true, blockId, hash, result: 'Approve basarili' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Approve basarili' })
+          },
+          onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
+        })
+        return
+      }
+
+      if (blockId === 'token-allowance') {
+        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        completeStep({ success: true, blockId, result: 'Allowance okundu: 100 USDC' })
+        setTxState({ status: 'done', step: currentStep, blockId, result: 'Allowance: 100 USDC' })
+        return
+      }
+
+      if (blockId === 'token-transfer') {
+        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        setTxState({ status: 'confirming', step: currentStep, blockId })
+        writeContract({
+          address: '0xf817257fed379853cDe0fa4F97AB987181B1e5Ea',
+          abi: [{ type: 'function', name: 'transfer', inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],
+          functionName: 'transfer',
+          args: ['0x0000000000000000000000000000000000000001', parseEther('1')],
+        }, {
+          onSuccess: (hash) => {
+            completeStep({ success: true, blockId, hash, result: 'Token transfer basarili' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Token transfer basarili' })
+          },
+          onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
+        })
+        return
+      }
+
+      // NFT mint
+      if (blockId === 'nft-mint') {
+        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        setTxState({ status: 'confirming', step: currentStep, blockId })
+        writeContract({
+          address: ACHIEVEMENT_NFT_ADDRESS,
+          abi: ACHIEVEMENT_NFT_ABI,
+          functionName: 'mintAchievement',
+          args: [address, 'Temel Modul', selectedTopic],
+          value: parseEther('0.001'),
+        }, {
+          onSuccess: (hash) => {
+            completeStep({ success: true, blockId, hash, result: 'NFT mint edildi' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'NFT mint edildi' })
+          },
+          onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
+        })
+        return
+      }
+
+      // Staking
+      if (blockId === 'staking-stake') {
+        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        completeStep({ success: true, blockId, result: 'NFT stake edildi (simulasyon)' })
+        setTxState({ status: 'done', step: currentStep, blockId, result: 'NFT stake edildi' })
+        return
+      }
+
+      // Generic: log the step as complete
+      const stepLabel = topicSteps[currentStep]?.label?.tr || blockId
+      completeStep({ success: true, blockId, result: `${stepLabel} tamamlandi` })
+      setTxState({ status: 'done', step: currentStep, blockId, result: `${stepLabel} tamamlandi` })
     } catch (err) {
       setTxState({ status: 'error', step: currentStep, blockId, error: err?.message || 'Islem reddedildi' })
     }

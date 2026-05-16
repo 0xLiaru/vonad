@@ -1,6 +1,6 @@
 import { useDraggable } from '@dnd-kit/core'
 import { useAccount, useReadContract } from 'wagmi'
-import { Lock, AlertTriangle } from 'lucide-react'
+import { Lock, AlertTriangle, CheckCircle } from 'lucide-react'
 import { useApp } from '../../context/AppContext.jsx'
 import { getBlockIcon } from '../../data/topicIcons.js'
 import { PREMIUM_SUBSCRIPTION_ABI, USER_PROGRESS_ABI } from '../../contracts/abis.js'
@@ -8,7 +8,7 @@ import { PREMIUM_SUBSCRIPTION_ADDRESS, USER_PROGRESS_ADDRESS } from '../../contr
 
 export default function BlockPalette() {
   const { selectedTopic, topicSteps, currentStep, completedSteps } = useApp()
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const { data: isPremium, refetch: refetchPremium } = useReadContract({
     address: PREMIUM_SUBSCRIPTION_ADDRESS,
@@ -39,6 +39,7 @@ export default function BlockPalette() {
     name: activeStep.label,
     desc: activeStep.desc?.tr,
     locked: (activeStep.premium && !isPremium) || freeLimitReached,
+    alreadyDone: activeStep.id === 'wallet-connect' && isConnected,
     freeLimitReached,
   }
 
@@ -65,17 +66,28 @@ export default function BlockPalette() {
 
 function PaletteBlock({ block, isPremium }) {
   const isLocked = block.locked
+  const isAlreadyDone = block.alreadyDone
   const Icon = getBlockIcon(block.id)
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `palette-${block.id}`,
     data: { type: 'palette', blockId: block.id },
-    disabled: isLocked,
+    disabled: isLocked || isAlreadyDone,
   })
 
   const style = transform
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 50 }
     : undefined
+
+  if (isAlreadyDone) {
+    return (
+      <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-green-500/10 border border-green-500/30">
+        <CheckCircle size={24} className="text-green-400" />
+        <span className="text-sm text-green-400 font-medium">Cuzdan zaten bagli!</span>
+        <span className="text-[10px] text-slate-400 text-center">Blogu surukleyin, adim otomatik tamamlanir</span>
+      </div>
+    )
+  }
 
   if (isLocked) {
     return (
