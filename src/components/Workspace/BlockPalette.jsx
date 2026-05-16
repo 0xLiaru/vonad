@@ -30,20 +30,15 @@ export default function BlockPalette() {
   if (!selectedTopic) return null
 
   return (
-    <div className="w-52 border-r border-slate-700/30 bg-slate-900/20 flex flex-col shrink-0">
-      <div className="h-9 border-b border-slate-700/30 flex items-center px-3 bg-slate-900/30">
-        <span className="text-slate-400 text-xs font-medium">Blok Paleti</span>
+    <div className="w-48 border-r border-slate-700/30 bg-slate-900/20 flex flex-col shrink-0">
+      <div className="h-8 border-b border-slate-700/30 flex items-center px-3 bg-slate-900/30">
+        <span className="text-slate-400 text-[11px] font-medium">Bloklar</span>
       </div>
       <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
         {blocks.map((block) => {
           if (placedIds.has(block.id)) return null
-          return (
-            <PaletteBlock key={block.id} block={block} isPremium={isPremium} />
-          )
+          return <PaletteBlock key={block.id} block={block} isPremium={isPremium} />
         })}
-        {blocks.length === 0 && (
-          <p className="text-slate-600 text-xs text-center py-4">Blok yok</p>
-        )}
       </div>
     </div>
   )
@@ -60,7 +55,7 @@ function PaletteBlock({ block, isPremium }) {
   })
 
   const style = transform
-    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 50 }
+    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 50, opacity: 0.9 }
     : undefined
 
   return (
@@ -69,16 +64,16 @@ function PaletteBlock({ block, isPremium }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm cursor-grab active:cursor-grabbing transition-all border ${
+      className={`flex items-center gap-2 px-2.5 py-2 rounded-lg cursor-grab active:cursor-grabbing transition-all border min-w-0 ${
         isLocked
           ? 'bg-slate-800/20 border-slate-700/20 text-slate-600 cursor-not-allowed'
           : isDragging
-          ? 'bg-purple-500/20 border-purple-500/50 text-purple-300 scale-105 shadow-lg shadow-purple-500/10'
+          ? 'bg-purple-500/20 border-purple-500/50 shadow-lg shadow-purple-500/10'
           : 'bg-slate-800/50 border-slate-700/30 text-slate-300 hover:border-slate-600 hover:bg-slate-700/50'
       }`}
     >
-      <Icon size={15} className={isLocked ? 'text-slate-600' : isDragging ? 'text-purple-400' : 'text-slate-400'} />
-      <span className="flex-1 text-[11px] leading-tight">{block.name?.tr || block.id}</span>
+      <Icon size={14} className={isLocked ? 'text-slate-600' : 'text-slate-400 shrink-0'} />
+      <span className="text-[11px] leading-tight truncate">{block.name?.tr || block.id}</span>
       {isLocked && <Lock size={10} className="text-slate-600 shrink-0" />}
       {block.locked && isPremium && <Unlock size={10} className="text-green-400 shrink-0" />}
     </div>

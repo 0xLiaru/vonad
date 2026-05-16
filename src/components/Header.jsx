@@ -1,6 +1,7 @@
-﻿import { useTranslation } from 'react-i18next'
+﻿import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAccount, useReadContract } from 'wagmi'
-import { Globe, FlaskConical, Crown, User, Home, Trophy } from 'lucide-react'
+import { Globe, Crown, Menu, X, Home, BookOpen, Trophy, User } from 'lucide-react'
 import WalletButton from './WalletButton'
 import { PREMIUM_SUBSCRIPTION_ABI } from '../contracts/abis.js'
 import { PREMIUM_SUBSCRIPTION_ADDRESS } from '../contracts/addresses.js'
@@ -10,6 +11,7 @@ export default function Header() {
   const { t, i18n } = useTranslation()
   const { isConnected, address } = useAccount()
   const { setShowPremiumModal, setShowAccount, showHomePage, setShowHomePage, setShowLeaderboard } = useApp()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const { data: isPremium } = useReadContract({
     address: PREMIUM_SUBSCRIPTION_ADDRESS,
@@ -19,82 +21,97 @@ export default function Header() {
     query: { enabled: isConnected && !!address },
   })
 
-  const toggleLang = () => {
-    i18n.changeLanguage(i18n.language === 'tr' ? 'en' : 'tr')
-  }
+  const toggleLang = () => i18n.changeLanguage(i18n.language === 'tr' ? 'en' : 'tr')
+
+  const navItems = [
+    { icon: Home, label: 'Anasayfa', action: () => { setShowHomePage(true); setMenuOpen(false) } },
+    { icon: BookOpen, label: 'Ogren', action: () => { setShowHomePage(false); setMenuOpen(false) } },
+    { icon: Trophy, label: 'Liderlik', action: () => { setShowLeaderboard(true); setMenuOpen(false) } },
+    { icon: User, label: 'Hesabim', action: () => { setShowAccount(true); setMenuOpen(false) } },
+  ]
 
   return (
-    <header className="h-14 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-between px-4 sm:px-6 shrink-0">
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => setShowHomePage(true)}
-          className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center hover:scale-105 transition-transform"
-        >
+    <header className="h-14 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0 relative z-50">
+      {/* Logo */}
+      <button onClick={() => setShowHomePage(true)} className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
           <span className="text-white font-bold text-sm">V</span>
-        </button>
-        <div className="hidden sm:block">
-          <h1 className="text-white font-semibold text-sm leading-tight">{t('app.title')}</h1>
-          <p className="text-slate-500 text-xs">{t('app.subtitle')}</p>
         </div>
-      </div>
+        <span className="text-white font-semibold text-sm hidden sm:inline">{t('app.title')}</span>
+      </button>
 
-      <div className="flex items-center gap-1.5 sm:gap-3">
-        {!isConnected && (
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-yellow-500/10 border border-yellow-500/20">
-            <FlaskConical size={12} className="text-yellow-400" />
-            <span className="text-yellow-400 text-xs font-medium">Demo Modunda</span>
-          </div>
-        )}
+      {/* Desktop Nav */}
+      <nav className="hidden md:flex items-center gap-1">
+        {navItems.map((item) => (
+          <button
+            key={item.label}
+            onClick={item.action}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-sm"
+          >
+            <item.icon size={15} />
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      {/* Right */}
+      <div className="flex items-center gap-2 shrink-0">
         {isConnected && !isPremium && (
           <button
             onClick={() => setShowPremiumModal(true)}
-            className="flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded-md bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-medium hover:bg-yellow-500/20 transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-md bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-medium hover:bg-yellow-500/20 transition-colors"
           >
             <Crown size={12} />
-            <span className="hidden sm:inline">Premium Al</span>
+            Premium
           </button>
         )}
         {isConnected && isPremium && (
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-purple-500/10 border border-purple-500/20">
-            <Crown size={12} className="text-purple-400" />
-            <span className="text-purple-400 text-xs font-medium">Premium</span>
-          </div>
-        )}
-        {!showHomePage && (
-          <button
-            onClick={() => setShowHomePage(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-800 border border-slate-700/50 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-colors"
-          >
-            <Home size={12} />
-            Anasayfa
-          </button>
-        )}
-        <button
-          onClick={() => setShowLeaderboard(true)}
-          className="flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded-md bg-slate-800 border border-slate-700/50 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-colors"
-        >
-          <Trophy size={12} />
-          <span className="hidden sm:inline">Liderlik</span>
-        </button>
-        {isConnected && (
-          <button
-            onClick={() => setShowAccount(true)}
-            className="flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded-md bg-slate-800 border border-slate-700/50 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-colors"
-          >
-            <User size={12} />
-            <span className="hidden sm:inline">Hesabim</span>
-          </button>
+          <span className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-medium">
+            <Crown size={12} /> Premium
+          </span>
         )}
         <WalletButton />
-        <div className="w-px h-6 bg-slate-700/50 hidden sm:block" />
-        <button
-          onClick={toggleLang}
-          className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-sm"
-        >
-          <Globe size={16} />
+        <button onClick={toggleLang} className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-sm">
+          <Globe size={15} />
           <span className="hidden sm:inline">{i18n.language === 'tr' ? 'EN' : 'TR'}</span>
         </button>
+
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+        >
+          {menuOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
       </div>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <>
+          <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMenuOpen(false)} />
+          <div className="absolute top-full right-0 mt-1 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-xl z-50 py-1 mr-2 md:hidden">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={item.action}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+              >
+                <item.icon size={15} />
+                {item.label}
+              </button>
+            ))}
+            {isConnected && !isPremium && (
+              <button
+                onClick={() => { setShowPremiumModal(true); setMenuOpen(false) }}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-yellow-400 hover:bg-slate-700 transition-colors border-t border-slate-700/50 mt-1 pt-2.5"
+              >
+                <Crown size={15} />
+                Premium Al
+              </button>
+            )}
+          </div>
+        </>
+      )}
     </header>
   )
 }
