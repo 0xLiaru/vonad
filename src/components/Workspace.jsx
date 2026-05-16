@@ -20,6 +20,9 @@ export default function Workspace() {
   const [txState, setTxState] = useState(null) // { status: 'pending'|'confirming'|'done'|'error', hash?, step? }
   const [wrongDrop, setWrongDrop] = useState(null)
 
+  const USDC = '0xf817257fed379853cDe0fa4F97AB987181B1e5Ea'
+  const ZERO_ADDR = '0x0000000000000000000000000000000000000001'
+
   const { isConnected, address } = useAccount()
   const { connect, connectors } = useConnect()
   const { signMessage } = useSignMessage()
@@ -95,10 +98,10 @@ export default function Workspace() {
         if (!isConnected) throw new Error('Once cuzdan baglayin')
         setTxState({ status: 'confirming', step: currentStep, blockId })
         writeContract({
-          address: '0xf817257fed379853cDe0fa4F97AB987181B1e5Ea',
+          address: USDC,
           abi: [{ type: 'function', name: 'approve', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],
           functionName: 'approve',
-          args: ['0xf817257fed379853cDe0fa4F97AB987181B1e5Ea', parseEther('100')],
+          args: [USDC, parseEther('100')],
         }, {
           onSuccess: (hash) => {
             completeStep({ success: true, blockId, hash, result: 'Approve basarili' })
@@ -120,10 +123,10 @@ export default function Workspace() {
         if (!isConnected) throw new Error('Once cuzdan baglayin')
         setTxState({ status: 'confirming', step: currentStep, blockId })
         writeContract({
-          address: '0xf817257fed379853cDe0fa4F97AB987181B1e5Ea',
+          address: USDC,
           abi: [{ type: 'function', name: 'transfer', inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],
           functionName: 'transfer',
-          args: ['0x0000000000000000000000000000000000000001', parseEther('1')],
+          args: [ZERO_ADDR, parseEther('1')],
         }, {
           onSuccess: (hash) => {
             completeStep({ success: true, blockId, hash, result: 'Token transfer basarili' })
