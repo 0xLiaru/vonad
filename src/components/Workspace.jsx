@@ -47,7 +47,7 @@ export default function Workspace() {
         setTimeout(() => setWrongDrop(null), 700)
       }
     }
-  }, [currentStep])
+  }, [currentStep, executeStepAction])
 
   const executeStepAction = useCallback(async (blockId) => {
     const activeStep = topicSteps[currentStep]
@@ -238,7 +238,7 @@ export default function Workspace() {
     } catch (err) {
       setTxState({ status: 'error', step: currentStep, blockId, error: err?.message || 'Islem reddedildi' })
     }
-  }, [currentStep, topicSteps, isConnected, connect, connectors, signMessage, sendTransaction, completeStep])
+  }, [currentStep, topicSteps, isConnected, address, selectedTopic, connect, connectors, signMessage, sendTransaction, writeContract, completeStep])
 
   const allDone = completedSteps.length >= topicSteps.length
 
