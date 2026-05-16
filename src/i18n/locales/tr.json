@@ -1,0 +1,36 @@
+{
+  "app": {
+    "title": "Vonad",
+    "subtitle": "Blockchain Eğitim Platformu"
+  },
+  "header": {
+    "language": "Dil"
+  },
+  "leftPanel": {
+    "search": "Konu ara...",
+    "categories": "Kategoriler",
+    "basics": "Temel Bilgiler",
+    "transactions": "İşlemler",
+    "blocks": "Bloklar",
+    "consensus": "Konsensüs",
+    "smartContracts": "Akıllı Sözleşmeler",
+    "mining": "Madencilik",
+    "wallets": "Cüzdanlar",
+    "security": "Güvenlik"
+  },
+  "workspace": {
+    "title": "Çalışma Alanı",
+    "placeholder": "Blokları buraya sürükleyip bırakın",
+    "hint": "Sol panelden bir konu seçin veya blokları sürükleyin",
+    "validate": "Doğrula"
+  },
+  "rightPanel": {
+    "details": "Konu Detayı",
+    "noSelection": "Henüz bir konu seçilmedi",
+    "selectHint": "Detayları görmek için sol panelden bir konu seçin",
+    "console": "Konsol",
+    "consolePlaceholder": "Çıktı burada görüntülenecek...",
+    "consoleLoaded": "Konu yüklendi. Blok panelinden blokları sürükleyin.",
+    "consoleHint": "Blokları doğru sırada bağlayın ve \"Doğrula\" butonuna tıklayın."
+  }
+}

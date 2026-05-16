@@ -1,0 +1,36 @@
+{
+  "app": {
+    "title": "Vonad",
+    "subtitle": "Blockchain Education Platform"
+  },
+  "header": {
+    "language": "Language"
+  },
+  "leftPanel": {
+    "search": "Search topics...",
+    "categories": "Categories",
+    "basics": "Basics",
+    "transactions": "Transactions",
+    "blocks": "Blocks",
+    "consensus": "Consensus",
+    "smartContracts": "Smart Contracts",
+    "mining": "Mining",
+    "wallets": "Wallets",
+    "security": "Security"
+  },
+  "workspace": {
+    "title": "Workspace",
+    "placeholder": "Drag and drop blocks here",
+    "hint": "Select a topic from the left panel or drag blocks",
+    "validate": "Validate"
+  },
+  "rightPanel": {
+    "details": "Topic Details",
+    "noSelection": "No topic selected",
+    "selectHint": "Select a topic from the left panel to see details",
+    "console": "Console",
+    "consolePlaceholder": "Output will be displayed here...",
+    "consoleLoaded": "Topic loaded. Drag blocks from the block palette.",
+    "consoleHint": "Connect blocks in the correct order and click \"Validate\"."
+  }
+}
