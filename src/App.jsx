@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from 'react'
+﻿import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { ToastProvider } from './components/Toast'
 import { AppProvider, useApp } from './context/AppContext'
@@ -9,7 +9,7 @@ import LeftPanel from './components/LeftPanel'
 import Workspace from './components/Workspace'
 import RightPanel from './components/RightPanel'
 import PremiumModal from './components/PremiumModal'
-import AccountPage from './components/AccountPage'
+const AccountPage = lazy(() => import('./components/AccountPage.jsx'))
 import ShareModal from './components/ShareModal'
 import HomePage from './components/HomePage'
 import LeaderboardPage from './components/LeaderboardPage'
@@ -69,7 +69,7 @@ function AppContent() {
         )}
       </div>
       <PremiumModal open={showPremiumModal} onClose={() => setShowPremiumModal(false)} onSuccess={handlePremiumSuccess} />
-      <AccountPage open={showAccount} onClose={() => setShowAccount(false)} />
+      <Suspense fallback={null}><AccountPage open={showAccount} onClose={() => setShowAccount(false)} /></Suspense>
       <ShareModal open={showShareModal} onClose={() => setShowShareModal(false)} data={shareData} />
       <LeaderboardPage open={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
       <OnboardingModal open={showOnboarding} onClose={() => { markOnboardingDone(); setShowOnboarding(false) }} />
@@ -88,3 +88,4 @@ function App() {
 }
 
 export default App
+
