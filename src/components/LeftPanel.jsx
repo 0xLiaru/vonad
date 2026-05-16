@@ -1,7 +1,18 @@
-import { useState, useMemo } from 'react'
+﻿import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAccount, useReadContract } from 'wagmi'
 import { Search, ChevronRight, ArrowLeft, Lock, Unlock } from 'lucide-react'
+import { getTopicIcon, getBlockIcon } from '../data/topicIcons.js'
+
+function TopicIcon({ topicKey, size = 20, className = 'text-slate-400' }) {
+  const Icon = getTopicIcon(topicKey)
+  return <Icon size={size} className={className} />
+}
+
+function BlockIcon({ blockId, size = 14, className = 'text-slate-400' }) {
+  const Icon = getBlockIcon(blockId)
+  return <Icon size={size} className={className} />
+}
 import { topics, allTopicKeys, difficultyLabels, difficultyColors } from '../data/topics.js'
 import { useApp } from '../context/AppContext.jsx'
 import { PREMIUM_SUBSCRIPTION_ABI } from '../contracts/abis.js'
@@ -53,7 +64,7 @@ export default function LeftPanel() {
             {lang === 'tr' ? 'Geri Dön' : 'Back'}
           </button>
           <div className="flex items-center gap-2">
-            <span className="text-xl">{topic.icon}</span>
+            <TopicIcon topicKey={selectedTopic} />
             <h3 className="text-white font-semibold text-sm">{topic.name[lang]}</h3>
           </div>
           <span
@@ -78,7 +89,7 @@ export default function LeftPanel() {
                       : 'bg-slate-800 text-slate-300'
                   }`}
                 >
-                  <span>{block.icon}</span>
+                  <BlockIcon blockId={block.id} />
                   <span className="flex-1">{block.name[lang]}</span>
                   {block.locked && !isPremium && <Lock size={10} className="text-slate-600" />}
                   {block.locked && isPremium && <Unlock size={10} className="text-green-400" />}
@@ -119,7 +130,7 @@ export default function LeftPanel() {
                 className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 transition-colors group"
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="text-lg">{topic.icon}</span>
+                  <TopicIcon topicKey={key} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-slate-200 text-sm font-medium">{topic.name[lang]}</span>
@@ -152,3 +163,4 @@ export default function LeftPanel() {
     </aside>
   )
 }
+

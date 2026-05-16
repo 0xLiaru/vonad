@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi'
 import { useApp } from '../context/AppContext.jsx'
 import { topics, allTopicKeys, difficultyLabels, difficultyColors } from '../data/topics.js'
 import { ArrowRight, Crown, Check, Lock, Zap, Shield } from 'lucide-react'
+import { getTopicIcon } from '../data/topicIcons.js'
 
 export default function HomePage() {
   const { i18n } = useTranslation()
@@ -155,6 +156,7 @@ function TopicsSection({ lang, selectTopic }) {
 function TopicCard({ topicKey, lang, selectTopic, isFree = false }) {
   const topic = topics[topicKey]
   if (!topic) return null
+  const Icon = getTopicIcon(topicKey)
 
   return (
     <button
@@ -166,7 +168,7 @@ function TopicCard({ topicKey, lang, selectTopic, isFree = false }) {
       }`}
     >
       <div className="flex items-center gap-3">
-        <span className="text-2xl">{topic.icon}</span>
+        <Icon size={24} className="text-slate-400" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-white text-sm font-medium">{topic.name[lang]}</span>

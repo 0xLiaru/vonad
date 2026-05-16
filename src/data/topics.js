@@ -1,7 +1,7 @@
-export const topics = {
+﻿export const topics = {
   DeFi: {
     name: { tr: 'DeFi', en: 'DeFi' },
-    icon: '💰',
+    icon: '',
     shortDesc: {
       tr: 'Merkeziyetsiz finans uygulamaları ve protokolleri.',
       en: 'Decentralized finance applications and protocols.',
@@ -21,10 +21,10 @@ export const topics = {
       en: ['Creating Liquidity Pools', 'AMM Pricing Model', 'Yield Optimization', 'Flash Loan Mechanism'],
     },
     blocks: [
-      { id: 'defi-liquidity', name: { tr: 'Likidite Havuzu Ekle', en: 'Add Liquidity Pool' }, icon: '💧', locked: true },
-      { id: 'defi-swap', name: { tr: 'Swap Yap', en: 'Swap' }, icon: '🔄', locked: true },
-      { id: 'defi-yield', name: { tr: 'Yield Hesapla', en: 'Calculate Yield' }, icon: '📈', locked: true },
-      { id: 'defi-oracle', name: { tr: 'Price Oracle Çağır', en: 'Call Price Oracle' }, icon: '📡', locked: true },
+      { id: 'defi-liquidity', name: { tr: 'Likidite Havuzu Ekle', en: 'Add Liquidity Pool' }, icon: '', locked: true },
+      { id: 'defi-swap', name: { tr: 'Swap Yap', en: 'Swap' }, icon: '', locked: true },
+      { id: 'defi-yield', name: { tr: 'Yield Hesapla', en: 'Calculate Yield' }, icon: '', locked: true },
+      { id: 'defi-oracle', name: { tr: 'Price Oracle Çağır', en: 'Call Price Oracle' }, icon: '', locked: true },
     ],
     solution: ['defi-liquidity', 'defi-oracle', 'defi-swap', 'defi-yield'],
     rules: {
@@ -48,7 +48,7 @@ export const topics = {
   },
   NFT: {
     name: { tr: 'NFT', en: 'NFT' },
-    icon: '🖼️',
+    icon: '',
     shortDesc: {
       tr: 'Değiştirilemez token (NFT) oluşturma ve yönetimi.',
       en: 'Non-fungible token creation and management.',
@@ -68,10 +68,10 @@ export const topics = {
       en: ['ERC-721 Standard', 'Metadata Storage', 'Royalty Mechanism', 'NFT Marketplace Integration'],
     },
     blocks: [
-      { id: 'nft-mint', name: { tr: 'Mint Et', en: 'Mint' }, icon: '✨', locked: true },
-      { id: 'nft-transfer', name: { tr: 'Transfer Et', en: 'Transfer' }, icon: '📤', locked: true },
-      { id: 'nft-metadata', name: { tr: 'Metadata Oku', en: 'Read Metadata' }, icon: '📋', locked: true },
-      { id: 'nft-royalty', name: { tr: 'Royalty Ayarla', en: 'Set Royalty' }, icon: '💎', locked: true },
+      { id: 'nft-mint', name: { tr: 'Mint Et', en: 'Mint' }, icon: '', locked: true },
+      { id: 'nft-transfer', name: { tr: 'Transfer Et', en: 'Transfer' }, icon: '', locked: true },
+      { id: 'nft-metadata', name: { tr: 'Metadata Oku', en: 'Read Metadata' }, icon: '', locked: true },
+      { id: 'nft-royalty', name: { tr: 'Royalty Ayarla', en: 'Set Royalty' }, icon: '', locked: true },
     ],
     solution: ['nft-mint', 'nft-metadata', 'nft-royalty', 'nft-transfer'],
     rules: {
@@ -95,7 +95,7 @@ export const topics = {
   },
   Staking: {
     name: { tr: 'Staking', en: 'Staking' },
-    icon: '🏦',
+    icon: '',
     shortDesc: {
       tr: 'Token stake etme ve ödül kazanma mekanizmaları.',
       en: 'Token staking and reward earning mechanisms.',
@@ -115,10 +115,10 @@ export const topics = {
       en: ['Stake Mechanism', 'Reward Calculation', 'Lock Periods', 'Slashing Conditions'],
     },
     blocks: [
-      { id: 'staking-stake', name: { tr: 'Stake Et', en: 'Stake' }, icon: '🔒', locked: true },
-      { id: 'staking-unstake', name: { tr: 'Unstake Et', en: 'Unstake' }, icon: '🔓', locked: true },
-      { id: 'staking-reward', name: { tr: 'Reward Hesapla', en: 'Calculate Reward' }, icon: '🏆', locked: true },
-      { id: 'staking-lock', name: { tr: 'Lock Süresi Ayarla', en: 'Set Lock Period' }, icon: '⏱️', locked: true },
+      { id: 'staking-stake', name: { tr: 'Stake Et', en: 'Stake' }, icon: '', locked: true },
+      { id: 'staking-unstake', name: { tr: 'Unstake Et', en: 'Unstake' }, icon: '', locked: true },
+      { id: 'staking-reward', name: { tr: 'Reward Hesapla', en: 'Calculate Reward' }, icon: '', locked: true },
+      { id: 'staking-lock', name: { tr: 'Lock Süresi Ayarla', en: 'Set Lock Period' }, icon: '', locked: true },
     ],
     solution: ['staking-stake', 'staking-lock', 'staking-reward', 'staking-unstake'],
     rules: {
@@ -142,7 +142,7 @@ export const topics = {
   },
   DAO: {
     name: { tr: 'DAO', en: 'DAO' },
-    icon: '🏛️',
+    icon: '',
     shortDesc: {
       tr: 'Merkeziyetsiz otonom organizasyon yönetimi.',
       en: 'Decentralized autonomous organization governance.',
@@ -162,10 +162,10 @@ export const topics = {
       en: ['Proposal Creation', 'Voting Mechanisms', 'Quorum Calculation', 'Execution Process'],
     },
     blocks: [
-      { id: 'dao-proposal', name: { tr: 'Proposal Oluştur', en: 'Create Proposal' }, icon: '📝', locked: true },
-      { id: 'dao-vote', name: { tr: 'Oy Ver', en: 'Vote' }, icon: '🗳️', locked: true },
-      { id: 'dao-quorum', name: { tr: 'Quorum Kontrol Et', en: 'Check Quorum' }, icon: '✅', locked: true },
-      { id: 'dao-execute', name: { tr: 'Execute Et', en: 'Execute' }, icon: '⚡', locked: true },
+      { id: 'dao-proposal', name: { tr: 'Proposal Oluştur', en: 'Create Proposal' }, icon: '', locked: true },
+      { id: 'dao-vote', name: { tr: 'Oy Ver', en: 'Vote' }, icon: '', locked: true },
+      { id: 'dao-quorum', name: { tr: 'Quorum Kontrol Et', en: 'Check Quorum' }, icon: '', locked: true },
+      { id: 'dao-execute', name: { tr: 'Execute Et', en: 'Execute' }, icon: '', locked: true },
     ],
     solution: ['dao-proposal', 'dao-vote', 'dao-quorum', 'dao-execute'],
     rules: {
@@ -189,7 +189,7 @@ export const topics = {
   },
   Bridge: {
     name: { tr: 'Bridge', en: 'Bridge' },
-    icon: '🌉',
+    icon: '',
     shortDesc: {
       tr: 'Blok zincirleri arası varlık transferi.',
       en: 'Cross-chain asset transfer between blockchains.',
@@ -209,9 +209,9 @@ export const topics = {
       en: ['Token Locking', 'Message Protocol', 'Validator Network', 'Emergency Mechanism'],
     },
     blocks: [
-      { id: 'bridge-lock', name: { tr: 'Token Kilitle', en: 'Lock Token' }, icon: '🔐', locked: true },
-      { id: 'bridge-send', name: { tr: 'Karşı Zincire Mesaj Gönder', en: 'Send Message to Other Chain' }, icon: '📨', locked: true },
-      { id: 'bridge-unlock', name: { tr: 'Unlock Et', en: 'Unlock' }, icon: '🔑', locked: true },
+      { id: 'bridge-lock', name: { tr: 'Token Kilitle', en: 'Lock Token' }, icon: '', locked: true },
+      { id: 'bridge-send', name: { tr: 'Karşı Zincire Mesaj Gönder', en: 'Send Message to Other Chain' }, icon: '', locked: true },
+      { id: 'bridge-unlock', name: { tr: 'Unlock Et', en: 'Unlock' }, icon: '', locked: true },
     ],
     solution: ['bridge-lock', 'bridge-send', 'bridge-unlock'],
     rules: {
@@ -233,7 +233,7 @@ export const topics = {
   },
   Token: {
     name: { tr: 'Token', en: 'Token' },
-    icon: '🪙',
+    icon: '',
     shortDesc: {
       tr: 'ERC-20 token işlemleri ve yönetimi.',
       en: 'ERC-20 token operations and management.',
@@ -253,10 +253,10 @@ export const topics = {
       en: ['ERC-20 Standard', 'Transfer Operations', 'Approve/Allowance', 'Token Burning'],
     },
     blocks: [
-      { id: 'token-transfer', name: { tr: 'Transfer Et', en: 'Transfer' }, icon: '💸', locked: false },
-      { id: 'token-approve', name: { tr: 'Approve Et', en: 'Approve' }, icon: '👍', locked: false },
-      { id: 'token-allowance', name: { tr: 'Allowance Kontrol Et', en: 'Check Allowance' }, icon: '🔍', locked: false },
-      { id: 'token-burn', name: { tr: 'Burn Et', en: 'Burn' }, icon: '🔥', locked: false },
+      { id: 'token-transfer', name: { tr: 'Transfer Et', en: 'Transfer' }, icon: '', locked: false },
+      { id: 'token-approve', name: { tr: 'Approve Et', en: 'Approve' }, icon: '', locked: false },
+      { id: 'token-allowance', name: { tr: 'Allowance Kontrol Et', en: 'Check Allowance' }, icon: '', locked: false },
+      { id: 'token-burn', name: { tr: 'Burn Et', en: 'Burn' }, icon: '', locked: false },
     ],
     solution: ['token-approve', 'token-allowance', 'token-transfer'],
     rules: {
@@ -278,7 +278,7 @@ export const topics = {
   },
   Wallet: {
     name: { tr: 'Wallet', en: 'Wallet' },
-    icon: '👛',
+    icon: '',
     shortDesc: {
       tr: 'Kripto cüzdan bağlantısı ve işlemleri.',
       en: 'Crypto wallet connection and operations.',
@@ -298,10 +298,10 @@ export const topics = {
       en: ['Wallet Connection', 'Transaction Signing', 'Balance Query', 'Network Management'],
     },
     blocks: [
-      { id: 'wallet-connect', name: { tr: 'Cüzdan Bağla', en: 'Connect Wallet' }, icon: '🔌', locked: false },
-      { id: 'wallet-sign', name: { tr: 'İmza At', en: 'Sign' }, icon: '✍️', locked: false },
-      { id: 'wallet-balance', name: { tr: 'Bakiye Oku', en: 'Read Balance' }, icon: '📊', locked: false },
-      { id: 'wallet-disconnect', name: { tr: 'Disconnect Et', en: 'Disconnect' }, icon: '🔌', locked: false },
+      { id: 'wallet-connect', name: { tr: 'Cüzdan Bağla', en: 'Connect Wallet' }, icon: '', locked: false },
+      { id: 'wallet-sign', name: { tr: 'İmza At', en: 'Sign' }, icon: '', locked: false },
+      { id: 'wallet-balance', name: { tr: 'Bakiye Oku', en: 'Read Balance' }, icon: '', locked: false },
+      { id: 'wallet-disconnect', name: { tr: 'Disconnect Et', en: 'Disconnect' }, icon: '', locked: false },
     ],
     solution: ['wallet-connect', 'wallet-balance', 'wallet-sign', 'wallet-disconnect'],
     rules: {
@@ -325,7 +325,7 @@ export const topics = {
   },
   Gas: {
     name: { tr: 'Gas', en: 'Gas' },
-    icon: '⛽',
+    icon: '',
     shortDesc: {
       tr: 'Gas ücretleri ve işlem maliyet optimizasyonu.',
       en: 'Gas fees and transaction cost optimization.',
@@ -345,9 +345,9 @@ export const topics = {
       en: ['Gas Calculation', 'EIP-1559 Mechanism', 'Gas Limit Optimization', 'Transaction Prioritization'],
     },
     blocks: [
-      { id: 'gas-limit', name: { tr: 'Gas Limit Ayarla', en: 'Set Gas Limit' }, icon: '🎚️', locked: true },
-      { id: 'gas-price', name: { tr: 'Gas Price Oku', en: 'Read Gas Price' }, icon: '📖', locked: true },
-      { id: 'gas-eip1559', name: { tr: 'EIP1559 Fee Hesapla', en: 'Calculate EIP1559 Fee' }, icon: '🧮', locked: true },
+      { id: 'gas-limit', name: { tr: 'Gas Limit Ayarla', en: 'Set Gas Limit' }, icon: '', locked: true },
+      { id: 'gas-price', name: { tr: 'Gas Price Oku', en: 'Read Gas Price' }, icon: '', locked: true },
+      { id: 'gas-eip1559', name: { tr: 'EIP1559 Fee Hesapla', en: 'Calculate EIP1559 Fee' }, icon: '', locked: true },
     ],
     solution: ['gas-price', 'gas-limit', 'gas-eip1559'],
     rules: {
@@ -369,7 +369,7 @@ export const topics = {
   },
   SmartContract: {
     name: { tr: 'Smart Contract', en: 'Smart Contract' },
-    icon: '📜',
+    icon: '',
     shortDesc: {
       tr: 'Akıllı sözleşme dağıtımı ve etkileşimi.',
       en: 'Smart contract deployment and interaction.',
@@ -389,10 +389,10 @@ export const topics = {
       en: ['Solidity Basics', 'Deploy Process', 'ABI Usage', 'Event Listening'],
     },
     blocks: [
-      { id: 'sc-deploy', name: { tr: 'Deploy Et', en: 'Deploy' }, icon: '🚀', locked: true },
-      { id: 'sc-call', name: { tr: 'Fonksiyon Çağır', en: 'Call Function' }, icon: '📞', locked: true },
-      { id: 'sc-event', name: { tr: 'Event Dinle', en: 'Listen Event' }, icon: '👂', locked: true },
-      { id: 'sc-abi', name: { tr: 'ABI Oku', en: 'Read ABI' }, icon: '📄', locked: true },
+      { id: 'sc-deploy', name: { tr: 'Deploy Et', en: 'Deploy' }, icon: '', locked: true },
+      { id: 'sc-call', name: { tr: 'Fonksiyon Çağır', en: 'Call Function' }, icon: '', locked: true },
+      { id: 'sc-event', name: { tr: 'Event Dinle', en: 'Listen Event' }, icon: '', locked: true },
+      { id: 'sc-abi', name: { tr: 'ABI Oku', en: 'Read ABI' }, icon: '', locked: true },
     ],
     solution: ['sc-deploy', 'sc-abi', 'sc-call', 'sc-event'],
     rules: {
@@ -416,7 +416,7 @@ export const topics = {
   },
   Layer2: {
     name: { tr: 'Layer2', en: 'Layer2' },
-    icon: '⚡',
+    icon: '',
     shortDesc: {
       tr: 'Ölçeklendirme çözümleri ve rollup teknolojileri.',
       en: 'Scaling solutions and rollup technologies.',
@@ -436,9 +436,9 @@ export const topics = {
       en: ['Rollup Architecture', 'State Root Verification', 'Withdraw Process', 'Fraud Proof'],
     },
     blocks: [
-      { id: 'l2-rollup', name: { tr: 'Rollup\'a Gönder', en: 'Send to Rollup' }, icon: '📦', locked: true },
-      { id: 'l2-verify', name: { tr: 'State Root Doğrula', en: 'Verify State Root' }, icon: '🔬', locked: true },
-      { id: 'l2-withdraw', name: { tr: 'Withdraw Et', en: 'Withdraw' }, icon: '🏧', locked: true },
+      { id: 'l2-rollup', name: { tr: 'Rollup\'a Gönder', en: 'Send to Rollup' }, icon: '', locked: true },
+      { id: 'l2-verify', name: { tr: 'State Root Doğrula', en: 'Verify State Root' }, icon: '', locked: true },
+      { id: 'l2-withdraw', name: { tr: 'Withdraw Et', en: 'Withdraw' }, icon: '', locked: true },
     ],
     solution: ['l2-rollup', 'l2-verify', 'l2-withdraw'],
     rules: {
@@ -460,7 +460,7 @@ export const topics = {
   },
   Oracles: {
     name: { tr: 'Oracles', en: 'Oracles' },
-    icon: '🔮',
+    icon: '',
     shortDesc: {
       tr: 'Zincir dışı veriyi blok zincire taşıma.',
       en: 'Bringing off-chain data to the blockchain.',
@@ -480,9 +480,9 @@ export const topics = {
       en: ['Data Feeds', 'Randomness Generation', 'Off-chain Verification', 'Oracle Networks'],
     },
     blocks: [
-      { id: 'oracle-price', name: { tr: 'Fiyat Verisi Çek', en: 'Fetch Price Data' }, icon: '💹', locked: true },
-      { id: 'oracle-random', name: { tr: 'Randomness İste', en: 'Request Randomness' }, icon: '🎲', locked: true },
-      { id: 'oracle-verify', name: { tr: 'Off-chain Veri Doğrula', en: 'Verify Off-chain Data' }, icon: '🛡️', locked: true },
+      { id: 'oracle-price', name: { tr: 'Fiyat Verisi Çek', en: 'Fetch Price Data' }, icon: '', locked: true },
+      { id: 'oracle-random', name: { tr: 'Randomness İste', en: 'Request Randomness' }, icon: '', locked: true },
+      { id: 'oracle-verify', name: { tr: 'Off-chain Veri Doğrula', en: 'Verify Off-chain Data' }, icon: '', locked: true },
     ],
     solution: ['oracle-price', 'oracle-verify'],
     rules: {
@@ -502,7 +502,7 @@ export const topics = {
   },
   MEV: {
     name: { tr: 'MEV', en: 'MEV' },
-    icon: '🤖',
+    icon: '',
     shortDesc: {
       tr: 'Maksimum Çıkarılabilir Değer stratejileri.',
       en: 'Maximal Extractable Value strategies.',
@@ -522,9 +522,9 @@ export const topics = {
       en: ['Flashloan Mechanism', 'Arbitrage Strategies', 'Sandwich Protection', 'MEV Boost'],
     },
     blocks: [
-      { id: 'mev-flashloan', name: { tr: 'Flashloan Al', en: 'Get Flashloan' }, icon: '⚡', locked: true },
-      { id: 'mev-arbitrage', name: { tr: 'Arbitraj Yap', en: 'Arbitrage' }, icon: '📊', locked: true },
-      { id: 'mev-sandwich', name: { tr: 'Sandwich Koruması Ekle', en: 'Add Sandwich Protection' }, icon: '🛡️', locked: true },
+      { id: 'mev-flashloan', name: { tr: 'Flashloan Al', en: 'Get Flashloan' }, icon: '', locked: true },
+      { id: 'mev-arbitrage', name: { tr: 'Arbitraj Yap', en: 'Arbitrage' }, icon: '', locked: true },
+      { id: 'mev-sandwich', name: { tr: 'Sandwich Koruması Ekle', en: 'Add Sandwich Protection' }, icon: '', locked: true },
     ],
     solution: ['mev-flashloan', 'mev-arbitrage', 'mev-sandwich'],
     rules: {
@@ -546,7 +546,7 @@ export const topics = {
   },
   X402: {
     name: { tr: 'X402', en: 'X402' },
-    icon: '💳',
+    icon: '',
     shortDesc: {
       tr: 'HTTP 402 tabanlı blok zincir ödeme protokolü.',
       en: 'HTTP 402-based blockchain payment protocol.',
@@ -566,10 +566,10 @@ export const topics = {
       en: ['HTTP 402 Protocol', 'Micropayment Channel', 'Authorization Mechanism', 'Web3 Integration'],
     },
     blocks: [
-      { id: 'x402-init', name: { tr: 'HTTP Ödeme Başlat', en: 'Init HTTP Payment' }, icon: '🌐', locked: true },
-      { id: 'x402-catch', name: { tr: '402 Response Yakala', en: 'Catch 402 Response' }, icon: '🎣', locked: true },
-      { id: 'x402-micropay', name: { tr: 'Mikro Ödeme Gönder', en: 'Send Micropayment' }, icon: '💵', locked: true },
-      { id: 'x402-verify', name: { tr: 'Yetki Doğrula', en: 'Verify Auth' }, icon: '🔏', locked: true },
+      { id: 'x402-init', name: { tr: 'HTTP Ödeme Başlat', en: 'Init HTTP Payment' }, icon: '', locked: true },
+      { id: 'x402-catch', name: { tr: '402 Response Yakala', en: 'Catch 402 Response' }, icon: '', locked: true },
+      { id: 'x402-micropay', name: { tr: 'Mikro Ödeme Gönder', en: 'Send Micropayment' }, icon: '', locked: true },
+      { id: 'x402-verify', name: { tr: 'Yetki Doğrula', en: 'Verify Auth' }, icon: '', locked: true },
     ],
     solution: ['x402-init', 'x402-catch', 'x402-micropay', 'x402-verify'],
     rules: {
@@ -593,7 +593,7 @@ export const topics = {
   },
   Paymaster: {
     name: { tr: 'Paymaster', en: 'Paymaster' },
-    icon: '⛽',
+    icon: '',
     shortDesc: {
       tr: 'Gas sponsorluğu ve işlem ücreti yönetimi.',
       en: 'Gas sponsorship and transaction fee management.',
@@ -613,9 +613,9 @@ export const topics = {
       en: ['ERC-4337 Architecture', 'Gas Sponsorship', 'Whitelist Management', 'Transaction Verification'],
     },
     blocks: [
-      { id: 'paymaster-sponsor', name: { tr: 'Gas Sponsorla', en: 'Sponsor Gas' }, icon: '🎁', locked: true },
-      { id: 'paymaster-whitelist', name: { tr: 'Kullanıcı Whitelist Et', en: 'Whitelist User' }, icon: '📋', locked: true },
-      { id: 'paymaster-sign', name: { tr: 'İşlem İmzala', en: 'Sign Transaction' }, icon: '✍️', locked: true },
+      { id: 'paymaster-sponsor', name: { tr: 'Gas Sponsorla', en: 'Sponsor Gas' }, icon: '', locked: true },
+      { id: 'paymaster-whitelist', name: { tr: 'Kullanıcı Whitelist Et', en: 'Whitelist User' }, icon: '', locked: true },
+      { id: 'paymaster-sign', name: { tr: 'İşlem İmzala', en: 'Sign Transaction' }, icon: '', locked: true },
     ],
     solution: ['paymaster-whitelist', 'paymaster-sign', 'paymaster-sponsor'],
     rules: {
@@ -637,7 +637,7 @@ export const topics = {
   },
   Consensus: {
     name: { tr: 'Consensus', en: 'Consensus' },
-    icon: '🤝',
+    icon: '',
     shortDesc: {
       tr: 'Blok zincir mutabakat mekanizmaları.',
       en: 'Blockchain consensus mechanisms.',
@@ -657,9 +657,9 @@ export const topics = {
       en: ['Validator Selection', 'Block Proposal', 'Finality Mechanism', 'Slashing'],
     },
     blocks: [
-      { id: 'consensus-select', name: { tr: 'Validator Seç', en: 'Select Validator' }, icon: '🎯', locked: true },
-      { id: 'consensus-propose', name: { tr: 'Block Öner', en: 'Propose Block' }, icon: '📦', locked: true },
-      { id: 'consensus-finality', name: { tr: 'Finality Kontrol Et', en: 'Check Finality' }, icon: '✅', locked: true },
+      { id: 'consensus-select', name: { tr: 'Validator Seç', en: 'Select Validator' }, icon: '', locked: true },
+      { id: 'consensus-propose', name: { tr: 'Block Öner', en: 'Propose Block' }, icon: '', locked: true },
+      { id: 'consensus-finality', name: { tr: 'Finality Kontrol Et', en: 'Check Finality' }, icon: '', locked: true },
     ],
     solution: ['consensus-select', 'consensus-propose', 'consensus-finality'],
     rules: {

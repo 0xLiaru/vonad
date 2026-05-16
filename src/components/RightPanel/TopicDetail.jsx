@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { topics, difficultyLabels, difficultyColors } from '../../data/topics.js'
 import { useApp } from '../../context/AppContext.jsx'
 import { BookOpen, TrendingUp, Layers, Lightbulb } from 'lucide-react'
+import { getTopicIcon } from '../../data/topicIcons.js'
 
 export default function TopicDetail() {
   const { t, i18n } = useTranslation()
@@ -12,12 +13,13 @@ export default function TopicDetail() {
 
   const topic = topics[selectedTopic]
   const nextTopic = topics[topic.nextTopic]
+  const TopicIcon = getTopicIcon(selectedTopic)
 
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="p-4 space-y-5">
         <div className="flex items-start gap-3">
-          <span className="text-2xl">{topic.icon}</span>
+          <TopicIcon size={24} className="text-slate-400 shrink-0 mt-1" />
           <div>
             <h3 className="text-white font-semibold">{topic.name[lang]}</h3>
             <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full ${difficultyColors[topic.difficulty]}`}>

@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react'
 import { DndContext, PointerSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core'
 import { useTranslation } from 'react-i18next'
-import { Blocks, CheckCircle, XCircle, Play } from 'lucide-react'
+import { Blocks, Play, CheckCircle, XCircle } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
+import { topics } from '../data/topics.js'
 import BlockPalette from './Workspace/BlockPalette'
 import Canvas from './Workspace/Canvas'
 
@@ -13,6 +14,7 @@ export default function Workspace() {
     canvasBlocks,
     addBlockToCanvas,
     reorderCanvasBlocks,
+    removeBlockFromCanvas,
     validation,
     validateCanvas,
     isSimulating,
@@ -21,6 +23,7 @@ export default function Workspace() {
   } = useApp()
   const [activeId, setActiveId] = useState(null)
   const [overId, setOverId] = useState(null)
+  const [wrongDrop, setWrongDrop] = useState(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -43,16 +46,24 @@ export default function Workspace() {
       if (!over) return
 
       const activeData = active.data.current
+      const overData = over.data.current
 
       if (activeData?.type === 'palette') {
-        if (over.id === 'canvas') {
-          addBlockToCanvas(activeData.blockId)
+        const blockId = activeData.blockId
+
+        if (overData?.type === 'slot') {
+          const slotTargetId = overData.targetId
+          if (blockId === slotTargetId) {
+            addBlockToCanvas(blockId)
+          } else {
+            setWrongDrop(blockId)
+            setTimeout(() => setWrongDrop(null), 600)
+          }
         }
         return
       }
 
       if (activeData?.type === 'canvas') {
-        const overData = over.data.current
         if (overData?.type === 'canvas') {
           const fromIndex = activeData.index
           const toIndex = overData.index
@@ -81,7 +92,7 @@ export default function Workspace() {
               disabled={isSimulating}
               className="text-xs px-3 py-1 rounded-md bg-slate-800 text-slate-400 hover:bg-slate-700 transition-colors disabled:opacity-50"
             >
-              {t('workspace.validate') || 'Doğrula'}
+              {t('workspace.validate') || 'Dogrula'}
             </button>
             {canRun && (
               <button
@@ -89,12 +100,12 @@ export default function Workspace() {
                 className="text-xs px-3 py-1 rounded-md bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium hover:from-purple-600 hover:to-blue-600 transition-all flex items-center gap-1.5"
               >
                 <Play size={12} />
-                Çalıştır
+                Calistir
               </button>
             )}
             {isSimulating && (
               <span className="text-xs px-3 py-1 rounded-md bg-purple-500/10 text-purple-400 animate-pulse">
-                Çalışıyor...
+                Calisiyor...
               </span>
             )}
           </div>
@@ -109,10 +120,24 @@ export default function Workspace() {
         onDragEnd={handleDragEnd}
       >
         <div className="flex-1 flex min-h-0">
-          {selectedTopic && <BlockPalette />}
-          <Canvas activeId={activeId} overId={overId} />
+          {selectedTopic ? <Canvas activeId={activeId} overId={overId} /> : (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl border-2 border-dashed border-slate-700 flex items-center justify-center bg-slate-900/50">
+                  <Blocks size={24} className="text-slate-600" />
+                </div>
+                <p className="text-slate-500 text-sm">Sol panelden bir konu secin</p>
+              </div>
+            </div>
+          )}
         </div>
       </DndContext>
+
+      {wrongDrop && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-red-500/90 text-white text-xs px-4 py-2 rounded-lg animate-[fadeIn_0.3s_ease-out] z-50">
+          Yanlis slot! Bu blogu dogru slota surukleyin.
+        </div>
+      )}
 
       {validation && (
         <div
@@ -123,7 +148,7 @@ export default function Workspace() {
           }`}
         >
           {validation.valid ? <CheckCircle size={16} className="shrink-0 mt-0.5" /> : <XCircle size={16} className="shrink-0 mt-0.5" />}
-          <span>{validation.text.tr}</span>
+          <span>{validation.text?.tr || ''}</span>
         </div>
       )}
     </main>

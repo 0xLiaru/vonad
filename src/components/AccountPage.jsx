@@ -11,6 +11,7 @@ import {
   GAS_SPONSOR_PAYMASTER_ADDRESS, LEADERBOARD_ADDRESS, ESCROW_ADDRESS, USER_PROGRESS_ADDRESS
 } from '../contracts/addresses.js'
 import { topics, allTopicKeys } from '../data/topics.js'
+import { getTopicIcon } from '../data/topicIcons.js'
 
 export { AccountPage as default }
 
@@ -355,7 +356,7 @@ function ProgressSection({ address }) {
             const pct = Math.min((completed / moduleCount) * 100, 100)
             return (
               <div key={topicKey} className="flex items-center gap-3">
-                <span className="text-lg">{topic.icon}</span>
+                {(() => { const Icon = getTopicIcon(topicKey); return <Icon size={20} className="text-slate-400 shrink-0" /> })()}
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-slate-300">{topic.name.tr}</span>

@@ -89,15 +89,15 @@ export function AppProvider({ children }) {
   const validateCanvas = useCallback(() => {
     if (!selectedTopic) return false
     const topic = topics[selectedTopic]
-    const currentIds = canvasBlocks.map((b) => b.id)
     const solutionIds = topic.solution
+    const placedIds = canvasBlocks.filter(Boolean).map((b) => b.id)
 
-    if (currentIds.length === 0) {
+    if (placedIds.length === 0) {
       setValidation(null)
       return false
     }
 
-    if (currentIds.length !== solutionIds.length) {
+    if (placedIds.length !== solutionIds.length) {
       setValidation({
         valid: false,
         text: {
@@ -108,9 +108,9 @@ export function AppProvider({ children }) {
       return false
     }
 
-    const isCorrect = currentIds.every((id, i) => id === solutionIds[i])
+    const allPlaced = solutionIds.every((id) => placedIds.includes(id))
 
-    if (isCorrect) {
+    if (allPlaced) {
       setValidation({
         valid: true,
         text: {
@@ -120,13 +120,14 @@ export function AppProvider({ children }) {
       })
       return true
     } else {
-      const wrongIndex = currentIds.findIndex((id, i) => id !== solutionIds[i])
-      const expectedBlock = topic.blocks.find((b) => b.id === solutionIds[wrongIndex])
+      const missing = solutionIds.filter((id) => !placedIds.includes(id))
+      const wrong = placedIds.filter((id) => !solutionIds.includes(id))
+      const missingBlock = topic.blocks.find((b) => b.id === missing[0])
       setValidation({
         valid: false,
         text: {
-          tr: `Hatali siralama. ${wrongIndex + 1}. sirada "${expectedBlock?.name?.tr}" olmaliydi. ${topic.rules.tr}`,
-          en: `Wrong sequence. At position ${wrongIndex + 1}, "${expectedBlock?.name?.en}" was expected. ${topic.rules.en}`,
+          tr: `Hatali blok. "${missingBlock?.name?.tr || missing[0]}" blogu eksik. ${topic.rules.tr}`,
+          en: `Wrong block. "${missingBlock?.name?.en || missing[0]}" is missing. ${topic.rules.en}`,
         },
       })
       return false
