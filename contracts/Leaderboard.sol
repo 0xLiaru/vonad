@@ -2,8 +2,9 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract Leaderboard is Ownable {
+contract Leaderboard is Ownable, Pausable {
     mapping(address => uint256) public modulesCompleted;
     mapping(address => uint256) public nftsEarned;
     mapping(address => uint256) public topicsCompleted;
@@ -34,7 +35,11 @@ contract Leaderboard is Ownable {
         address _user,
         string calldata _topicName,
         string calldata _moduleName
-    ) external {
+    ) external whenNotPaused {
+        require(_user != address(0), "Zero address");
+        require(bytes(_topicName).length > 0, "Empty topic name");
+        require(bytes(_moduleName).length > 0, "Empty module name");
+
         if (!isUser[_user]) {
             isUser[_user] = true;
             allUsers.push(_user);
@@ -116,7 +121,6 @@ contract Leaderboard is Ownable {
         }
     }
 
-    /// @notice Find a user's rank in a given category (1-indexed)
     function getUserRank(address _user, uint8 _category)
         external
         view
@@ -143,5 +147,13 @@ contract Leaderboard is Ownable {
         }
 
         return (higher + 1, userScore);
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }

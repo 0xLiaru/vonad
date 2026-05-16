@@ -3,9 +3,11 @@ pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
-contract StakingDiscount is Ownable, ERC721Holder {
+contract StakingDiscount is Ownable, Pausable, ReentrancyGuard, ERC721Holder {
     IERC721 public achievementNFT;
 
     struct StakeInfo {
@@ -29,10 +31,11 @@ contract StakingDiscount is Ownable, ERC721Holder {
     event NFTUnstaked(address indexed user, uint256 indexed tokenId);
 
     constructor(address _achievementNFT) Ownable(msg.sender) {
+        require(_achievementNFT != address(0), "Zero NFT address");
         achievementNFT = IERC721(_achievementNFT);
     }
 
-    function stake(uint256 _tokenId) external {
+    function stake(uint256 _tokenId) external nonReentrant whenNotPaused {
         require(
             achievementNFT.ownerOf(_tokenId) == msg.sender,
             "Not the owner"
@@ -55,7 +58,7 @@ contract StakingDiscount is Ownable, ERC721Holder {
         emit NFTStaked(msg.sender, _tokenId);
     }
 
-    function unstake(uint256 _tokenId) external {
+    function unstake(uint256 _tokenId) external nonReentrant {
         require(stakedNFTs[_tokenId].owner == msg.sender, "Not the staker");
 
         delete stakedNFTs[_tokenId];
@@ -66,9 +69,12 @@ contract StakingDiscount is Ownable, ERC721Holder {
         emit NFTUnstaked(msg.sender, _tokenId);
     }
 
-    function unstakeAll() external {
+    function unstakeAll() external nonReentrant {
         uint256[] memory stakes = userStakes[msg.sender];
-        for (uint256 i = stakes.length; i > 0; i--) {
+        uint256 len = stakes.length;
+        require(len > 0, "No stakes");
+
+        for (uint256 i = len; i > 0; i--) {
             uint256 tokenId = stakes[i - 1];
             delete stakedNFTs[tokenId];
             achievementNFT.safeTransferFrom(address(this), msg.sender, tokenId);
@@ -80,9 +86,10 @@ contract StakingDiscount is Ownable, ERC721Holder {
 
     function _removeFromUserStakes(address _user, uint256 _tokenId) internal {
         uint256[] storage stakes = userStakes[_user];
-        for (uint256 i = 0; i < stakes.length; i++) {
+        uint256 len = stakes.length;
+        for (uint256 i = 0; i < len; i++) {
             if (stakes[i] == _tokenId) {
-                stakes[i] = stakes[stakes.length - 1];
+                stakes[i] = stakes[len - 1];
                 stakes.pop();
                 break;
             }
@@ -111,5 +118,13 @@ contract StakingDiscount is Ownable, ERC721Holder {
         returns (StakeInfo memory)
     {
         return stakedNFTs[_tokenId];
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }

@@ -6,8 +6,8 @@ import { Info, Terminal, Gift, AlertTriangle, ShieldCheck, Zap, Loader2, Coins, 
 import { useApp } from '../context/AppContext.jsx'
 import { usePaymaster } from '../hooks/usePaymaster.js'
 import { topics } from '../data/topics.js'
-import { ACHIEVEMENT_NFT_ABI, LEADERBOARD_ABI } from '../contracts/abis.js'
-import { ACHIEVEMENT_NFT_ADDRESS, LEADERBOARD_ADDRESS } from '../contracts/addresses.js'
+import { ACHIEVEMENT_NFT_ABI, LEADERBOARD_ABI, USER_PROGRESS_ABI } from '../contracts/abis.js'
+import { ACHIEVEMENT_NFT_ADDRESS, LEADERBOARD_ADDRESS, USER_PROGRESS_ADDRESS } from '../contracts/addresses.js'
 import TopicDetail from './RightPanel/TopicDetail'
 
 export default function RightPanel() {
@@ -249,6 +249,7 @@ function MintAction({ topicKey, address, setShowShareModal, setShareData }) {
   })
 
   const { writeContract: writeLeaderboard, data: lbHash } = useWriteContract()
+  const { writeContract: writeUserProgress } = useWriteContract()
   const scoreUpdated = useRef(false)
 
   const feeNumeric = mintFee ? Number(formatEther(mintFee)) : 0.001
@@ -288,6 +289,12 @@ function MintAction({ topicKey, address, setShowShareModal, setShareData }) {
         abi: LEADERBOARD_ABI,
         functionName: 'updateScore',
         args: [address, topicKey, moduleName],
+      })
+      writeUserProgress({
+        address: USER_PROGRESS_ADDRESS,
+        abi: USER_PROGRESS_ABI,
+        functionName: 'completeModule',
+        args: [topicKey, moduleName],
       })
     }
   }, [isSuccess, receipt])

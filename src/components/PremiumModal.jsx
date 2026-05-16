@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { formatEther, parseEther } from 'viem'
+import { formatEther } from 'viem'
 import { X, Crown, ShieldCheck, Loader2 } from 'lucide-react'
-import { PREMIUM_SUBSCRIPTION_ABI } from '../contracts/abis.js'
-import { PREMIUM_SUBSCRIPTION_ADDRESS, STAKING_DISCOUNT_ADDRESS } from '../contracts/addresses.js'
-import { STAKING_DISCOUNT_ABI } from '../contracts/abis.js'
+import { PREMIUM_SUBSCRIPTION_ABI, STAKING_DISCOUNT_ABI, ESCROW_ABI } from '../contracts/abis.js'
+import { PREMIUM_SUBSCRIPTION_ADDRESS, STAKING_DISCOUNT_ADDRESS, ESCROW_ADDRESS } from '../contracts/addresses.js'
 import { topics, allTopicKeys } from '../data/topics.js'
 
 export default function PremiumModal({ open, onClose, onSuccess }) {
@@ -15,7 +14,21 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
   const { data: priceWei } = useReadContract({
     address: PREMIUM_SUBSCRIPTION_ADDRESS,
     abi: PREMIUM_SUBSCRIPTION_ABI,
-    functionName: 'PRICE_MON',
+    functionName: 'ESCROW_PRICE',
+    query: { enabled: open },
+  })
+
+  const { data: priceInMon } = useReadContract({
+    address: PREMIUM_SUBSCRIPTION_ADDRESS,
+    abi: PREMIUM_SUBSCRIPTION_ABI,
+    functionName: 'getCurrentPriceInMON',
+    query: { enabled: open },
+  })
+
+  const { data: priceInUsd } = useReadContract({
+    address: PREMIUM_SUBSCRIPTION_ADDRESS,
+    abi: PREMIUM_SUBSCRIPTION_ABI,
+    functionName: 'getCurrentPriceUSD',
     query: { enabled: open },
   })
 
@@ -55,7 +68,8 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
 
   if (!open) return null
 
-  const fullPrice = priceWei ? Number(formatEther(priceWei)) : 0.01
+  const fullPrice = priceInMon ? Number(formatEther(priceInMon)) : 0.01
+  const usdPrice = priceInUsd ? Number(priceInUsd) / 1e8 : 5
   const count = stakedCount ? Number(stakedCount) : 0
   const discountPct = discount ? Number(discount) : 0
   const discountedPrice = fullPrice * (1 - discountPct / 100)
@@ -68,10 +82,10 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
   const handlePurchase = () => {
     setStep('pending')
     writeContract({
-      address: PREMIUM_SUBSCRIPTION_ADDRESS,
-      abi: PREMIUM_SUBSCRIPTION_ABI,
-      functionName: 'purchaseWithMON',
-      value: parseEther(discountedPrice.toFixed(6)),
+      address: ESCROW_ADDRESS,
+      abi: ESCROW_ABI,
+      functionName: 'depositForPremium',
+      value: priceInMon || (priceWei || 10000000000000000n),
     })
   }
 
@@ -83,7 +97,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
           <div className="flex items-center justify-between p-5 border-b border-slate-700/50">
             <div className="flex items-center gap-2">
               <Crown size={18} className="text-yellow-400" />
-              <h3 className="text-white font-semibold">Premium Üyelik</h3>
+              <h3 className="text-white font-semibold">Premium Uyelik</h3>
             </div>
             <button onClick={onClose} className="text-slate-500 hover:text-white">
               <X size={18} />
@@ -95,8 +109,14 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
               <>
                 <div className="bg-slate-800 rounded-xl p-4 space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Aylık standart fiyat</span>
-                    <span className="text-slate-200 font-mono">{fullPrice} MON</span>
+                    <span className="text-slate-400">Aylik standart fiyat</span>
+                    <span className="text-slate-200 font-mono">
+                      {fullPrice.toFixed(6)} MON
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-500">(~${usdPrice.toFixed(2)} USD karsiligi)</span>
+                    <span className="text-slate-500">30 gun</span>
                   </div>
                   {count > 0 && (
                     <div className="flex justify-between text-sm">
@@ -104,21 +124,24 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                         Stake indirimi ({count} NFT - %{discountPct})
                       </span>
                       <span className="text-green-400 font-mono">
-                        -{(fullPrice - discountedPrice).toFixed(4)} MON
+                        -{(fullPrice - discountedPrice).toFixed(6)} MON
                       </span>
                     </div>
                   )}
                   <div className="border-t border-slate-700/50 pt-3 flex justify-between text-sm">
-                    <span className="text-white font-medium">Ödenecek tutar</span>
+                    <span className="text-white font-medium">Odenecek tutar</span>
                     <span className="text-white font-bold font-mono">
-                      {discountedPrice.toFixed(4)} MON
+                      {discountedPrice.toFixed(6)} MON
                     </span>
+                  </div>
+                  <div className="text-yellow-400/70 text-[10px]">
+                    Odeme Escrow kontratinda 30 gun kilitli kalir.
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <p className="text-slate-400 text-xs font-medium">
-                    Premium ile açılacak konular:
+                    Premium ile acilacak konular:
                   </p>
                   <div className="grid grid-cols-2 gap-1.5">
                     {premiumTopics.slice(0, 10).map((key) => (
@@ -143,7 +166,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                   disabled={!address}
                   className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium text-sm hover:from-purple-600 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {address ? 'Onayla ve Öde' : 'Önce cüzdan bağlayın'}
+                  {address ? 'Onayla ve Ode (Escrow)' : 'Once cuzdan baglayin'}
                 </button>
               </>
             )}
@@ -151,8 +174,8 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
             {step === 'pending' && (
               <div className="text-center py-6 space-y-3">
                 <Loader2 size={32} className="animate-spin text-purple-400 mx-auto" />
-                <p className="text-slate-300 text-sm">İşlem onaylanıyor...</p>
-                <p className="text-slate-500 text-xs">Cüzdanında işlemi onayla</p>
+                <p className="text-slate-300 text-sm">Islem onaylaniyor...</p>
+                <p className="text-slate-500 text-xs">Cuzdaninda islemi onayla</p>
                 {txHash && (
                   <p className="text-slate-600 text-xs font-mono truncate">
                     TX: {txHash.slice(0, 10)}...
@@ -168,7 +191,10 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                 </div>
                 <p className="text-green-400 font-medium">Premium Aktif!</p>
                 <p className="text-slate-400 text-sm">
-                  30 gün boyunca tüm konulara ve bloklara erişebilirsin.
+                  30 gun boyunca tum konulara ve bloklara erisebilirsin.
+                </p>
+                <p className="text-slate-500 text-xs">
+                  Odemen 30 gun escrow'da kilitli, bu sure icinde iade talep edebilirsin.
                 </p>
                 <button
                   onClick={onClose}

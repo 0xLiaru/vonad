@@ -4,10 +4,12 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
-contract AchievementNFT is ERC721URIStorage, Ownable {
+contract AchievementNFT is ERC721URIStorage, Ownable, Pausable, ReentrancyGuard {
     uint256 private _nextTokenId;
     uint256 public mintFee = 0.001 ether;
 
@@ -38,7 +40,10 @@ contract AchievementNFT is ERC721URIStorage, Ownable {
         address _to,
         string memory _moduleName,
         string memory _topicName
-    ) external payable returns (uint256) {
+    ) external payable nonReentrant whenNotPaused returns (uint256) {
+        require(_to != address(0), "Zero address");
+        require(bytes(_moduleName).length > 0, "Empty module name");
+        require(bytes(_topicName).length > 0, "Empty topic name");
         require(msg.value >= mintFee, "Insufficient mint fee");
 
         uint256 tokenId = ++_nextTokenId;
@@ -145,6 +150,16 @@ contract AchievementNFT is ERC721URIStorage, Ownable {
     }
 
     function withdraw() external onlyOwner {
-        payable(owner()).transfer(address(this).balance);
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No balance");
+        payable(owner()).transfer(balance);
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 }

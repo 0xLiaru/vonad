@@ -1,11 +1,20 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { X, Crown, Clock, Loader2, TrendingUp, Layers, Gift, Circle } from 'lucide-react'
-import { ACHIEVEMENT_NFT_ABI, STAKING_DISCOUNT_ABI, PREMIUM_SUBSCRIPTION_ABI } from '../contracts/abis.js'
-import { ACHIEVEMENT_NFT_ADDRESS, STAKING_DISCOUNT_ADDRESS, PREMIUM_SUBSCRIPTION_ADDRESS } from '../contracts/addresses.js'
-import { topics } from '../data/topics.js'
+﻿import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useAccount, useBalance, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { formatEther } from 'viem'
+import { Shield, TrendingUp, Layers, Gift, Wallet, Crown, Clock, Loader2, Circle, X, Zap } from 'lucide-react'
+import {
+  ACHIEVEMENT_NFT_ABI, STAKING_DISCOUNT_ABI, PREMIUM_SUBSCRIPTION_ABI,
+  GAS_SPONSOR_PAYMASTER_ABI, LEADERBOARD_ABI, ESCROW_ABI, USER_PROGRESS_ABI
+} from '../contracts/abis.js'
+import {
+  ACHIEVEMENT_NFT_ADDRESS, STAKING_DISCOUNT_ADDRESS, PREMIUM_SUBSCRIPTION_ADDRESS,
+  GAS_SPONSOR_PAYMASTER_ADDRESS, LEADERBOARD_ADDRESS, ESCROW_ADDRESS, USER_PROGRESS_ADDRESS
+} from '../contracts/addresses.js'
+import { topics, allTopicKeys } from '../data/topics.js'
 
-export default function AccountPage({ open, onClose }) {
+export { AccountPage as default }
+
+function AccountPage({ open, onClose }) {
   if (!open) return null
 
   return (
@@ -19,12 +28,59 @@ export default function AccountPage({ open, onClose }) {
               <X size={20} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            <AccountContent />
-          </div>
+          <AccountTabs />
         </div>
       </div>
     </>
+  )
+}
+
+function AccountTabs() {
+  const { address } = useAccount()
+  const [tab, setTab] = (function () {
+    const { useState } = require('react')
+    return useState('account')
+  })()
+
+  const { data: owner } = useReadContract({
+    address: PREMIUM_SUBSCRIPTION_ADDRESS,
+    abi: PREMIUM_SUBSCRIPTION_ABI,
+    functionName: 'owner',
+  })
+
+  const isOwner = address && owner && address.toLowerCase() === owner.toLowerCase()
+
+  return (
+    <>
+      <div className="flex border-b border-slate-700/50 shrink-0">
+        <TabButton active={tab === 'account'} onClick={() => setTab('account')}>
+          Hesabim
+        </TabButton>
+        {isOwner && (
+          <TabButton active={tab === 'admin'} onClick={() => setTab('admin')}>
+            <Shield size={12} className="mr-1 inline" />
+            Admin
+          </TabButton>
+        )}
+      </div>
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        {tab === 'account' && <AccountContent />}
+        {tab === 'admin' && <AdminPanel />}
+      </div>
+    </>
+  )
+}
+
+function TabButton({ active, onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2.5 text-xs font-medium transition-colors ${
+        active ? 'text-purple-400 border-b-2 border-purple-400' : 'text-slate-500 hover:text-slate-300'
+      }`}
+    >
+      {children}
+    </button>
   )
 }
 
@@ -47,7 +103,6 @@ function EmptyState({ text }) {
   return <div className="text-slate-500 text-sm text-center py-8">{text}</div>
 }
 
-// ── Premium ──
 function PremiumSection({ address }) {
   const { data: isPremium } = useReadContract({
     address: PREMIUM_SUBSCRIPTION_ADDRESS, abi: PREMIUM_SUBSCRIPTION_ABI,
@@ -96,7 +151,6 @@ function PremiumSection({ address }) {
   )
 }
 
-// ── NFT Grid ──
 function NftGrid({ address }) {
   const { data: tokenIds } = useReadContract({
     address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI,
@@ -112,7 +166,7 @@ function NftGrid({ address }) {
         <h3 className="text-slate-200 text-sm font-semibold">NFT'ler ({tokens.length})</h3>
       </div>
       {tokens.length === 0 ? (
-        <p className="text-slate-500 text-sm">Henuz NFT yok. Modulleri tamamlayarak kazanabilirsin.</p>
+        <p className="text-slate-500 text-sm">Henuz NFT yok.</p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {tokens.map((tokenId) => (
@@ -149,7 +203,6 @@ function NftCard({ tokenId }) {
   )
 }
 
-// ── Staking ──
 function StakingPanel({ address }) {
   const { data: stakedCount } = useReadContract({
     address: STAKING_DISCOUNT_ADDRESS, abi: STAKING_DISCOUNT_ABI,
@@ -203,15 +256,8 @@ function StakingPanel({ address }) {
           <p className="text-slate-500 text-xs">Stake edilebilir:</p>
           <div className="flex flex-wrap gap-2">
             {unstakedTokens.map((id) => (
-              <TxActionButton
-                key={id.toString()}
-                tokenId={id}
-                label={`Stake #${id}`}
-                color="green"
-                contractAddr={STAKING_DISCOUNT_ADDRESS}
-                abi={STAKING_DISCOUNT_ABI}
-                func="stake"
-              />
+              <TxActionButton key={id.toString()} tokenId={id} label={`Stake #${id}`} color="green"
+                contractAddr={STAKING_DISCOUNT_ADDRESS} abi={STAKING_DISCOUNT_ABI} func="stake" />
             ))}
           </div>
         </div>
@@ -222,15 +268,8 @@ function StakingPanel({ address }) {
           <p className="text-slate-500 text-xs">Stake edilmis:</p>
           <div className="flex flex-wrap gap-2">
             {stakedIds.map((id) => (
-              <TxActionButton
-                key={id.toString()}
-                tokenId={id}
-                label={`Unstake #${id}`}
-                color="red"
-                contractAddr={STAKING_DISCOUNT_ADDRESS}
-                abi={STAKING_DISCOUNT_ABI}
-                func="unstake"
-              />
+              <TxActionButton key={id.toString()} tokenId={id} label={`Unstake #${id}`} color="red"
+                contractAddr={STAKING_DISCOUNT_ADDRESS} abi={STAKING_DISCOUNT_ABI} func="unstake" />
             ))}
           </div>
         </div>
@@ -251,18 +290,11 @@ function StatBox({ label, value, color = 'text-white' }) {
 function TxApproveButton() {
   const { writeContract, isPending, data: hash } = useWriteContract()
   const { isSuccess } = useWaitForTransactionReceipt({ hash, query: { enabled: !!hash } })
-
   if (isSuccess) return null
-
   return (
-    <button
-      onClick={() => writeContract({
-        address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI,
-        functionName: 'setApprovalForAll', args: [STAKING_DISCOUNT_ADDRESS, true],
-      })}
+    <button onClick={() => writeContract({ address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI, functionName: 'setApprovalForAll', args: [STAKING_DISCOUNT_ADDRESS, true] })}
       disabled={isPending}
-      className="text-xs px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 flex items-center gap-1.5 disabled:opacity-50"
-    >
+      className="text-xs px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 flex items-center gap-1.5 disabled:opacity-50">
       {isPending && <Loader2 size={12} className="animate-spin" />}
       Staking icin Onayla
     </button>
@@ -270,73 +302,53 @@ function TxApproveButton() {
 }
 
 function TxActionButton({ tokenId, label, color, contractAddr, abi, func }) {
+  
   const { writeContract, isPending, data: hash } = useWriteContract()
   const { isSuccess } = useWaitForTransactionReceipt({ hash, query: { enabled: !!hash } })
   const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
-    if (isSuccess) {
-      const t = setTimeout(() => setHidden(true), 1000)
-      return () => clearTimeout(t)
-    }
+    if (isSuccess) { const t = setTimeout(() => setHidden(true), 1000); return () => clearTimeout(t) }
   }, [isSuccess])
 
   if (hidden) return null
 
-  const colors = {
-    green: 'bg-green-500/10 text-green-400 hover:bg-green-500/20',
-    red: 'bg-red-500/10 text-red-400 hover:bg-red-500/20',
-  }
+  const colors = { green: 'bg-green-500/10 text-green-400 hover:bg-green-500/20', red: 'bg-red-500/10 text-red-400 hover:bg-red-500/20' }
 
   return (
-    <button
-      onClick={() => writeContract({ address: contractAddr, abi, functionName: func, args: [tokenId] })}
+    <button onClick={() => writeContract({ address: contractAddr, abi, functionName: func, args: [tokenId] })}
       disabled={isPending}
-      className={`text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 disabled:opacity-50 transition-colors ${colors[color]}`}
-    >
+      className={`text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 disabled:opacity-50 transition-colors ${colors[color]}`}>
       {isPending && <Loader2 size={11} className="animate-spin" />}
       {label}
     </button>
   )
 }
 
-// ── Progress ──
 function ProgressSection({ address }) {
-  const { data: tokenIds } = useReadContract({
-    address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI,
-    functionName: 'getUserTokens', args: [address],
+  
+  const { data: progress } = useReadContract({
+    address: USER_PROGRESS_ADDRESS, abi: USER_PROGRESS_ABI,
+    functionName: 'getUserProgress', args: [address],
   })
 
-  const ids = (tokenIds || []).filter(Boolean)
-
-  const [topicCounts, setTopicCounts] = useState({})
-
-  const handleAchievementRead = useCallback((topicName) => {
-    if (!topicName) return
-    setTopicCounts((prev) => {
-      const next = { ...prev }
-      next[topicName] = (next[topicName] || 0) + 1
-      return next
-    })
-  }, [])
+  const completions = progress || []
+  const topicCounts = {}
+  completions.forEach((c) => {
+    if (c.topicName) topicCounts[c.topicName] = (topicCounts[c.topicName] || 0) + 1
+  })
 
   return (
     <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
       <div className="flex items-center gap-2 mb-4">
         <TrendingUp size={16} className="text-green-400" />
         <h3 className="text-slate-200 text-sm font-semibold">
-          Ilerleme ({ids.length} modul tamamlandi)
+          Ilerleme ({completions.length} modul tamamlandi)
         </h3>
       </div>
 
-      {ids.map((id) => (
-        <AchievementReader key={id.toString()} tokenId={id} onRead={handleAchievementRead} />
-      ))}
-
-      {ids.length === 0 ? (
-        <p className="text-slate-500 text-sm">Henuz modul tamamlanmadi. Ilk konunu sec ve bloklari birlestir!</p>
-      ) : Object.keys(topicCounts).length === 0 ? (
-        <p className="text-slate-500 text-sm">Achievement verileri yukleniyor...</p>
+      {completions.length === 0 ? (
+        <p className="text-slate-500 text-sm">Henuz modul tamamlanmadi.</p>
       ) : (
         <div className="space-y-3">
           {Object.entries(topicCounts).map(([topicKey, completed]) => {
@@ -344,7 +356,6 @@ function ProgressSection({ address }) {
             if (!topic) return null
             const moduleCount = topic.modules?.tr?.length || 4
             const pct = Math.min((completed / moduleCount) * 100, 100)
-
             return (
               <div key={topicKey} className="flex items-center gap-3">
                 <span className="text-lg">{topic.icon}</span>
@@ -354,10 +365,8 @@ function ProgressSection({ address }) {
                     <span className="text-slate-500">{completed}/{moduleCount}</span>
                   </div>
                   <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-700"
-                      style={{ width: `${pct}%` }}
-                    />
+                    <div className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-700"
+                      style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               </div>
@@ -373,12 +382,10 @@ function ProgressSection({ address }) {
         </div>
         <div className="flex flex-wrap gap-2">
           {['Wallet', 'Token', 'DeFi', 'SmartContract'].map((key) => {
-            const t = topics[key]
-            if (!t) return null
+            const t = topics[key]; if (!t) return null
             return (
               <span key={key} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 text-xs text-slate-300 border border-slate-700/50">
-                <span>{t.icon}</span>
-                {t.name.tr}
+                <span>{t.icon}</span>{t.name.tr}
               </span>
             )
           })}
@@ -388,22 +395,104 @@ function ProgressSection({ address }) {
   )
 }
 
-function AchievementReader({ tokenId, onRead }) {
-  const reported = useRef(false)
-
-  const { data: achievement } = useReadContract({
-    address: ACHIEVEMENT_NFT_ADDRESS,
-    abi: ACHIEVEMENT_NFT_ABI,
-    functionName: 'getAchievement',
-    args: [tokenId],
+function AdminPanel() {
+  const { data: activePremiums } = useReadContract({
+    address: PREMIUM_SUBSCRIPTION_ADDRESS, abi: PREMIUM_SUBSCRIPTION_ABI,
+    functionName: 'totalActivePremiums',
   })
 
-  useEffect(() => {
-    if (!reported.current && achievement?.topicName) {
-      reported.current = true
-      onRead(achievement.topicName)
-    }
-  }, [achievement, onRead])
+  const { data: totalLocked } = useReadContract({
+    address: ESCROW_ADDRESS, abi: ESCROW_ABI,
+    functionName: 'getTotalLocked',
+  })
 
-  return null
+  const { data: paymasterDeposit } = useReadContract({
+    address: GAS_SPONSOR_PAYMASTER_ADDRESS, abi: GAS_SPONSOR_PAYMASTER_ABI,
+    functionName: 'getEntryPointDeposit',
+  })
+
+  const { data: owner } = useReadContract({
+    address: PREMIUM_SUBSCRIPTION_ADDRESS, abi: PREMIUM_SUBSCRIPTION_ABI,
+    functionName: 'owner',
+  })
+
+  const { data: userCount } = useReadContract({
+    address: USER_PROGRESS_ADDRESS, abi: USER_PROGRESS_ABI,
+    functionName: 'getUserCount',
+  })
+
+  const { data: topUsers } = useReadContract({
+    address: LEADERBOARD_ADDRESS, abi: LEADERBOARD_ABI,
+    functionName: 'getTopUsers',
+    args: [5n, 0],
+  })
+
+  const { data: platformBalance } = useBalance({ address: owner })
+
+  const locked = totalLocked ? Number(formatEther(totalLocked)) : 0
+  const platform = platformBalance ? Number(formatEther(platformBalance.value)) : 0
+  const paymaster = paymasterDeposit ? Number(formatEther(paymasterDeposit)) : 0
+
+  const topAddresses = topUsers?.[0] || []
+  const topScores = topUsers?.[1] || []
+
+  return (
+    <div className="space-y-6">
+      <h3 className="text-white font-semibold flex items-center gap-2">
+        <Shield size={16} className="text-purple-400" />
+        Admin Panel
+      </h3>
+
+      <div className="grid grid-cols-2 gap-3">
+        <AdminCard icon={<Crown size={16} className="text-yellow-400" />} label="Aktif Premium" value={String(activePremiums || 0)} />
+        <AdminCard icon={<Wallet size={16} className="text-green-400" />} label="Toplam Kullanici" value={String(userCount || 0)} />
+        <AdminCard icon={<Zap size={16} className="text-blue-400" />} label="Paymaster Deposu" value={`${paymaster.toFixed(4)} MON`} />
+        <AdminCard icon={<Layers size={16} className="text-purple-400" />} label="Escrow Kilitli" value={`${locked.toFixed(4)} MON`} />
+      </div>
+
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+        <h4 className="text-slate-200 text-sm font-semibold mb-3">Gelir Ozeti</h4>
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-400">Toplam Gelir</span>
+            <span className="text-white font-mono font-bold">{(platform + locked).toFixed(4)} MON</span>
+          </div>
+          <div className="flex justify-between text-xs ml-4">
+            <span className="text-green-400">Platform (cekilebilir)</span>
+            <span className="text-green-400 font-mono">{platform.toFixed(4)} MON</span>
+          </div>
+          <div className="flex justify-between text-xs ml-4">
+            <span className="text-purple-400">Escrow (kilitli)</span>
+            <span className="text-purple-400 font-mono">{locked.toFixed(4)} MON</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+        <h4 className="text-slate-200 text-sm font-semibold mb-3">En Cok Modul Tamamlayan</h4>
+        {topAddresses.length === 0 ? (
+          <p className="text-slate-500 text-xs">Henuz veri yok.</p>
+        ) : (
+          <div className="space-y-2">
+            {topAddresses.map((addr, i) => (
+              <div key={addr} className="flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-mono">{addr.slice(0, 6)}...{addr.slice(-4)}</span>
+                <span className="text-slate-200 font-mono">{topScores[i]?.toString() || '0'}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
+
+function AdminCard({ icon, label, value }) {
+  return (
+    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+      <div className="flex items-center gap-2 mb-2">{icon}<span className="text-slate-400 text-xs">{label}</span></div>
+      <p className="text-white font-bold text-lg">{value}</p>
+    </div>
+  )
+}
+

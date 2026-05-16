@@ -74,16 +74,43 @@ async function main() {
     process.env.ENTRY_POINT_ADDRESS ||
     "0x0000000071727De22E5E9d8BAf0edAc6f37da032";
 
+  // 1. Oracle (fiyat verisi)
+  const oracleAddr = await deploy("MonPriceOracle");
+
+  // 2. Core contracts
   const achievementAddr = await deploy("AchievementNFT");
-  const premiumAddr = await deploy("PremiumSubscription", [USDC_MONAD_TESTNET]);
+  const premiumAddr = await deploy("PremiumSubscription", [
+    USDC_MONAD_TESTNET,
+    oracleAddr,
+  ]);
   const stakingAddr = await deploy("StakingDiscount", [achievementAddr]);
+
+  // 3. Escrow (premium odeme akisi)
+  const escrowAddr = await deploy("Escrow", [premiumAddr]);
+
+  // 4. Paymaster (ERC-4337 gas sponsorlugu)
   const paymasterAddr = await deploy("GasSponsorPaymaster", [
     ENTRY_POINT,
     premiumAddr,
   ]);
 
+  // 5. Progress & Leaderboard
+  const userProgressAddr = await deploy("UserProgress");
   const leaderboardAddr = await deploy("Leaderboard");
 
+  // 6. PremiumSubscription'a escrow adresini set et
+  const premiumArtifact = await hre.artifacts.readArtifact("PremiumSubscription");
+  console.log("  Setting escrow on PremiumSubscription...");
+  const setEscrowHash = await walletClient.writeContract({
+    address: premiumAddr,
+    abi: premiumArtifact.abi,
+    functionName: "setEscrow",
+    args: [escrowAddr],
+  });
+  await publicClient.waitForTransactionReceipt({ hash: setEscrowHash });
+  console.log("  Escrow set on PremiumSubscription.");
+
+  // 7. .env dosyasini guncelle
   const envPath = join(__dirname, "..", ".env");
   let envContent = "";
   if (existsSync(envPath)) {
@@ -91,12 +118,15 @@ async function main() {
   }
 
   const updates = {
+    VITE_MON_PRICE_ORACLE_ADDRESS: oracleAddr,
     VITE_ACHIEVEMENT_NFT_ADDRESS: achievementAddr,
     VITE_PREMIUM_SUBSCRIPTION_ADDRESS: premiumAddr,
     VITE_STAKING_DISCOUNT_ADDRESS: stakingAddr,
+    VITE_ESCROW_ADDRESS: escrowAddr,
     VITE_GAS_SPONSOR_PAYMASTER_ADDRESS: paymasterAddr,
-    VITE_ENTRY_POINT_ADDRESS: ENTRY_POINT,
+    VITE_USER_PROGRESS_ADDRESS: userProgressAddr,
     VITE_LEADERBOARD_ADDRESS: leaderboardAddr,
+    VITE_ENTRY_POINT_ADDRESS: ENTRY_POINT,
   };
 
   for (const [key, value] of Object.entries(updates)) {
