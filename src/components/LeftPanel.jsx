@@ -20,7 +20,7 @@ export default function LeftPanel() {
     abi: PREMIUM_SUBSCRIPTION_ABI,
     functionName: 'isPremium',
     args: address ? [address] : undefined,
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 5000 },
   })
 
   const filteredTopics = useMemo(() => {

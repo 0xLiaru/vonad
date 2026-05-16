@@ -1,13 +1,15 @@
-﻿import { createContext, useContext, useState, useCallback, useRef, useMemo } from "react"
-import { useAccount } from "wagmi"
-import { topics } from "../data/topics.js"
+﻿import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react'
+import { useAccount } from 'wagmi'
+import { topics } from '../data/topics.js'
 
 const AppContext = createContext(null)
 
 export function AppProvider({ children }) {
   const { address, isConnected } = useAccount()
   const [selectedTopic, setSelectedTopic] = useState(null)
-  const [canvasBlocks, setCanvasBlocks] = useState([])
+  const [currentStep, setCurrentStep] = useState(0)
+  const [completedSteps, setCompletedSteps] = useState([])
+  const [stepResults, setStepResults] = useState({})
   const [validation, setValidation] = useState(null)
   const [isSimulating, setIsSimulating] = useState(false)
   const [simulationOutput, setSimulationOutput] = useState([])
@@ -23,14 +25,19 @@ export function AppProvider({ children }) {
   const timerRef = useRef(null)
 
   const walletAddress = useMemo(() => {
-    return isConnected && address ? address : "0xDEM0...1234"
+    return isConnected && address ? address : '0xDEM0...1234'
   }, [isConnected, address])
 
   const isDemoMode = !isConnected
 
+  const topicSteps = selectedTopic ? (topics[selectedTopic]?.steps || []) : []
+  const totalSteps = topicSteps.length
+
   const selectTopic = useCallback((topicKey) => {
     setSelectedTopic(topicKey)
-    setCanvasBlocks([])
+    setCurrentStep(0)
+    setCompletedSteps([])
+    setStepResults({})
     setValidation(null)
     setSimulationOutput([])
     setSimulationComplete(false)
@@ -42,7 +49,9 @@ export function AppProvider({ children }) {
 
   const clearTopic = useCallback(() => {
     setSelectedTopic(null)
-    setCanvasBlocks([])
+    setCurrentStep(0)
+    setCompletedSteps([])
+    setStepResults({})
     setValidation(null)
     setSimulationOutput([])
     setSimulationComplete(false)
@@ -51,97 +60,36 @@ export function AppProvider({ children }) {
     if (timerRef.current) clearTimeout(timerRef.current)
   }, [])
 
+  const completeStep = useCallback((result) => {
+    setCompletedSteps((prev) => [...prev, currentStep])
+    setStepResults((prev) => ({ ...prev, [currentStep]: result }))
+    setCurrentStep((prev) => prev + 1)
+    setValidation(null)
+    setSimulationComplete(false)
+    setSimulationOutput([])
+  }, [currentStep])
+
   const addBlockToCanvas = useCallback((blockId) => {
-    setCanvasBlocks((prev) => {
-      if (prev.find((b) => b.id === blockId)) return prev
-      setValidation(null)
-      setSimulationComplete(false)
-      setModuleCompleted(false)
-      setSimulationOutput([])
-      const block = topics[selectedTopic]?.blocks.find((b) => b.id === blockId)
-      return [...prev, { id: blockId, name: block?.name, icon: block?.icon }]
-    })
-  }, [selectedTopic])
+    setValidation(null)
+    setSimulationComplete(false)
+    setModuleCompleted(false)
+    setSimulationOutput([])
+  }, [])
 
   const removeBlockFromCanvas = useCallback((blockId) => {
-    setCanvasBlocks((prev) => {
-      setValidation(null)
-      setSimulationComplete(false)
-      setModuleCompleted(false)
-      setSimulationOutput([])
-      return prev.filter((b) => b.id !== blockId)
-    })
+    // Not used in step-based system but kept for compatibility
   }, [])
 
-  const reorderCanvasBlocks = useCallback((startIndex, endIndex) => {
-    setCanvasBlocks((prev) => {
-      setValidation(null)
-      setSimulationComplete(false)
-      setModuleCompleted(false)
-      setSimulationOutput([])
-      const result = Array.from(prev)
-      const [removed] = result.splice(startIndex, 1)
-      result.splice(endIndex, 0, removed)
-      return result
-    })
-  }, [])
+  const reorderCanvasBlocks = useCallback((a, b) => {}, [])
 
   const validateCanvas = useCallback(() => {
-    if (!selectedTopic) return false
-    const topic = topics[selectedTopic]
-    const solutionIds = topic.solution
-    const placedIds = canvasBlocks.filter(Boolean).map((b) => b.id)
-
-    if (placedIds.length === 0) {
-      setValidation(null)
-      return false
-    }
-
-    if (placedIds.length !== solutionIds.length) {
-      setValidation({
-        valid: false,
-        text: {
-          tr: `Eksik blok var. ${solutionIds.length} blok baglamalisin.`,
-          en: `Missing blocks. You need to connect ${solutionIds.length} blocks.`,
-        },
-      })
-      return false
-    }
-
-    const allPlaced = solutionIds.every((id) => placedIds.includes(id))
-
-    if (allPlaced) {
-      setValidation({
-        valid: true,
-        text: {
-          tr: "Dogru siralama! Tum bloklar basariyla baglandi.",
-          en: "Correct sequence! All blocks connected successfully.",
-        },
-      })
-      return true
-    } else {
-      const missing = solutionIds.filter((id) => !placedIds.includes(id))
-      const wrong = placedIds.filter((id) => !solutionIds.includes(id))
-      const missingBlock = topic.blocks.find((b) => b.id === missing[0])
-      setValidation({
-        valid: false,
-        text: {
-          tr: `Hatali blok. "${missingBlock?.name?.tr || missing[0]}" blogu eksik. ${topic.rules.tr}`,
-          en: `Wrong block. "${missingBlock?.name?.en || missing[0]}" is missing. ${topic.rules.en}`,
-        },
-      })
-      return false
-    }
-  }, [selectedTopic, canvasBlocks])
+    return false
+  }, [])
 
   const startSimulation = useCallback(() => {
     if (!selectedTopic || isSimulating) return
-
-    const isValid = validateCanvas()
-    if (!isValid) return
-
     const topic = topics[selectedTopic]
-    const steps = topic.simulation.tr
+    const steps = topic.simulation?.tr || topic.steps?.map(s => s.desc?.tr || s.id) || []
     setSimulationOutput([])
     setSimulationComplete(false)
     setIsSimulating(true)
@@ -158,7 +106,7 @@ export function AppProvider({ children }) {
       }
     }
     runStep()
-  }, [selectedTopic, isSimulating, validateCanvas])
+  }, [selectedTopic, isSimulating])
 
   const completeModule = useCallback(() => {
     setModuleCompleted(true)
@@ -167,37 +115,21 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider
       value={{
-        selectedTopic,
-        selectTopic,
-        clearTopic,
-        canvasBlocks,
-        addBlockToCanvas,
-        removeBlockFromCanvas,
-        reorderCanvasBlocks,
-        validation,
-        validateCanvas,
-        isSimulating,
-        simulationOutput,
-        simulationComplete,
-        moduleCompleted,
-        startSimulation,
-        completeModule,
-        walletAddress,
-        isDemoMode,
-        showPremiumModal,
-        setShowPremiumModal,
-        showAccount,
-        setShowAccount,
-        showShareModal,
-        setShowShareModal,
-        shareData,
-        setShareData,
-        showHomePage,
-        setShowHomePage,
-        showOnboarding,
-        setShowOnboarding,
-        showLeaderboard,
-        setShowLeaderboard,
+        selectedTopic, selectTopic, clearTopic,
+        currentStep, setCurrentStep, completedSteps, completeStep,
+        stepResults, totalSteps, topicSteps,
+        addBlockToCanvas, removeBlockFromCanvas, reorderCanvasBlocks,
+        validation, validateCanvas,
+        isSimulating, simulationOutput, simulationComplete, moduleCompleted,
+        startSimulation, completeModule,
+        walletAddress, isDemoMode,
+        showPremiumModal, setShowPremiumModal,
+        showAccount, setShowAccount,
+        showShareModal, setShowShareModal,
+        shareData, setShareData,
+        showHomePage, setShowHomePage,
+        showOnboarding, setShowOnboarding,
+        showLeaderboard, setShowLeaderboard,
       }}
     >
       {children}
@@ -207,6 +139,6 @@ export function AppProvider({ children }) {
 
 export function useApp() {
   const ctx = useContext(AppContext)
-  if (!ctx) throw new Error("useApp must be used within AppProvider")
+  if (!ctx) throw new Error('useApp must be used within AppProvider')
   return ctx
 }

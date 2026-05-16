@@ -1,51 +1,70 @@
-import { useMemo } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { useAccount, useReadContract } from 'wagmi'
-import { Lock, Unlock } from 'lucide-react'
+import { Lock, AlertTriangle } from 'lucide-react'
 import { useApp } from '../../context/AppContext.jsx'
-import { topics } from '../../data/topics.js'
 import { getBlockIcon } from '../../data/topicIcons.js'
-import { PREMIUM_SUBSCRIPTION_ABI } from '../../contracts/abis.js'
-import { PREMIUM_SUBSCRIPTION_ADDRESS } from '../../contracts/addresses.js'
+import { PREMIUM_SUBSCRIPTION_ABI, USER_PROGRESS_ABI } from '../../contracts/abis.js'
+import { PREMIUM_SUBSCRIPTION_ADDRESS, USER_PROGRESS_ADDRESS } from '../../contracts/addresses.js'
 
 export default function BlockPalette() {
-  const { selectedTopic, canvasBlocks } = useApp()
+  const { selectedTopic, topicSteps, currentStep, completedSteps } = useApp()
   const { address } = useAccount()
 
-  const { data: isPremium } = useReadContract({
+  const { data: isPremium, refetch: refetchPremium } = useReadContract({
     address: PREMIUM_SUBSCRIPTION_ADDRESS,
     abi: PREMIUM_SUBSCRIPTION_ABI,
     functionName: 'isPremium',
     args: address ? [address] : undefined,
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 5000 },
   })
 
-  const blocks = useMemo(() => {
-    if (!selectedTopic) return []
-    return topics[selectedTopic]?.blocks || []
-  }, [selectedTopic])
+  const { data: progressCount } = useReadContract({
+    address: USER_PROGRESS_ADDRESS,
+    abi: USER_PROGRESS_ABI,
+    functionName: 'getProgressCount',
+    args: address ? [address] : undefined,
+    query: { enabled: !!address, refetchInterval: 10000 },
+  })
 
-  const placedIds = new Set(canvasBlocks.filter(Boolean).map((b) => b.id))
+  const totalCompleted = Number(progressCount || 0) + completedSteps.length
+  const freeLimitReached = !isPremium && totalCompleted >= 5
 
-  if (!selectedTopic) return null
+  if (!selectedTopic || !topicSteps.length) return null
+
+  const activeStep = topicSteps[currentStep]
+  if (!activeStep || completedSteps.includes(currentStep)) return null
+
+  const stepBlock = {
+    id: activeStep.id,
+    name: activeStep.label,
+    desc: activeStep.desc?.tr,
+    locked: (activeStep.premium && !isPremium) || freeLimitReached,
+    freeLimitReached,
+  }
 
   return (
-    <div className="w-48 border-r border-slate-700/30 bg-slate-900/20 flex flex-col shrink-0">
+    <div className="w-52 border-r border-slate-700/30 bg-slate-900/20 flex flex-col shrink-0">
       <div className="h-8 border-b border-slate-700/30 flex items-center px-3 bg-slate-900/30">
-        <span className="text-slate-400 text-[11px] font-medium">Bloklar</span>
+        <span className="text-slate-400 text-[11px] font-medium">Adim {currentStep + 1}</span>
       </div>
-      <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
-        {blocks.map((block) => {
-          if (placedIds.has(block.id)) return null
-          return <PaletteBlock key={block.id} block={block} isPremium={isPremium} />
-        })}
+      <div className="flex-1 overflow-y-auto p-3">
+        <PaletteBlock block={stepBlock} isPremium={isPremium} />
+        {activeStep.premium && !isPremium && (
+          <p className="text-yellow-400 text-[10px] mt-2 text-center">Premium gerekiyor</p>
+        )}
+        {freeLimitReached && (
+          <p className="text-yellow-400 text-[10px] mt-2 text-center flex items-center justify-center gap-1">
+            <AlertTriangle size={10} />
+            Ucretsiz limit (5) doldu. Premium alin.
+          </p>
+        )}
       </div>
     </div>
   )
 }
 
 function PaletteBlock({ block, isPremium }) {
-  const isLocked = block.locked && !isPremium
+  const isLocked = block.locked
   const Icon = getBlockIcon(block.id)
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -55,8 +74,20 @@ function PaletteBlock({ block, isPremium }) {
   })
 
   const style = transform
-    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 50, opacity: 0.9 }
+    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 50 }
     : undefined
+
+  if (isLocked) {
+    return (
+      <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-800/20 border border-slate-700/20 text-slate-600">
+        <Lock size={24} className="text-slate-600" />
+        <span className="text-xs text-center text-slate-500">{block.name?.tr || block.id}</span>
+        {block.freeLimitReached && (
+          <span className="text-[10px] text-yellow-400">Ucretsiz limit doldu</span>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div
@@ -64,18 +95,17 @@ function PaletteBlock({ block, isPremium }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`flex items-center gap-2 px-2.5 py-2 rounded-lg cursor-grab active:cursor-grabbing transition-all border min-w-0 ${
-        isLocked
-          ? 'bg-slate-800/20 border-slate-700/20 text-slate-600 cursor-not-allowed'
-          : isDragging
-          ? 'bg-purple-500/20 border-purple-500/50 shadow-lg shadow-purple-500/10'
-          : 'bg-slate-800/50 border-slate-700/30 text-slate-300 hover:border-slate-600 hover:bg-slate-700/50'
+      className={`flex flex-col items-center gap-2 p-4 rounded-xl cursor-grab active:cursor-grabbing transition-all border-2 min-w-[180px] ${
+        isDragging
+          ? 'bg-purple-500/20 border-purple-500 shadow-lg shadow-purple-500/10 scale-105'
+          : 'bg-slate-800/50 border-slate-700/30 hover:border-blue-500/40 hover:bg-slate-700/50'
       }`}
     >
-      <Icon size={14} className={isLocked ? 'text-slate-600' : 'text-slate-400 shrink-0'} />
-      <span className="text-[11px] leading-tight truncate">{block.name?.tr || block.id}</span>
-      {isLocked && <Lock size={10} className="text-slate-600 shrink-0" />}
-      {block.locked && isPremium && <Unlock size={10} className="text-green-400 shrink-0" />}
+      <Icon size={28} className={isDragging ? 'text-purple-400' : 'text-slate-300'} />
+      <span className="text-sm text-white font-medium text-center">{block.name?.tr || block.id}</span>
+      {block.desc && (
+        <span className="text-[10px] text-slate-400 text-center leading-tight">{block.desc}</span>
+      )}
     </div>
   )
 }

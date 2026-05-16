@@ -1,13 +1,11 @@
 import { useDroppable } from '@dnd-kit/core'
 import { useApp } from '../../context/AppContext.jsx'
-import { topics } from '../../data/topics.js'
 import { getBlockIcon, getTopicColor } from '../../data/topicIcons.js'
 import BlockPalette from './BlockPalette'
-import { PlacedBlock } from './CanvasBlock'
-import { Blocks } from 'lucide-react'
+import { Check, Lock, ArrowDown, Blocks } from 'lucide-react'
 
 export default function Canvas({ activeId, overId }) {
-  const { selectedTopic, canvasBlocks, removeBlockFromCanvas } = useApp()
+  const { selectedTopic, topicSteps, currentStep, completedSteps, stepResults } = useApp()
 
   if (!selectedTopic) {
     return (
@@ -23,8 +21,6 @@ export default function Canvas({ activeId, overId }) {
     )
   }
 
-  const topic = topics[selectedTopic]
-  const solution = topic?.solution || []
   const colors = getTopicColor(selectedTopic)
 
   return (
@@ -35,26 +31,27 @@ export default function Canvas({ activeId, overId }) {
       <div className="flex-1 flex min-h-0">
         <BlockPalette />
         <div className="flex-1 flex flex-col items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-lg space-y-3">
-            {solution.map((targetId, index) => {
-              const placedBlock = canvasBlocks.find((b) => b?.id === targetId)
-              const targetBlock = topic.blocks.find((b) => b.id === targetId)
-              const isSlotFilled = Boolean(placedBlock)
+          <div className="w-full max-w-lg space-y-2">
+            {topicSteps.map((step, index) => {
+              const isCompleted = completedSteps.includes(index)
+              const isActive = index === currentStep && !isCompleted
+              const isLocked = index > currentStep
+              const result = stepResults[index]
 
               return (
-                <SlotItem
+                <StepSlot
                   key={index}
-                  slotIndex={index}
-                  targetId={targetId}
-                  targetBlock={targetBlock}
-                  placedBlock={placedBlock}
-                  isSlotFilled={isSlotFilled}
+                  index={index}
+                  step={step}
+                  isCompleted={isCompleted}
+                  isActive={isActive}
+                  isLocked={isLocked}
+                  result={result}
                   colors={colors}
                   activeId={activeId}
                   overId={overId}
-                  selectedTopic={selectedTopic}
-                  onRemove={() => removeBlockFromCanvas(targetId)}
-                  isLast={index === solution.length - 1}
+                  isLast={index === topicSteps.length - 1}
+                  totalSteps={topicSteps.length}
                 />
               )
             })}
@@ -65,51 +62,73 @@ export default function Canvas({ activeId, overId }) {
   )
 }
 
-function SlotItem({ slotIndex, targetId, targetBlock, placedBlock, isSlotFilled, colors, activeId, overId, selectedTopic, onRemove, isLast }) {
+function StepSlot({ index, step, isCompleted, isActive, isLocked, result, colors, activeId, overId, isLast, totalSteps }) {
   const { setNodeRef, isOver } = useDroppable({
-    id: `slot-${slotIndex}`,
-    data: { type: 'slot', slotIndex, targetId },
+    id: `slot-${index}`,
+    data: { type: 'slot', slotIndex: index, targetId: step.id },
   })
 
-  const TargetIcon = targetBlock ? getBlockIcon(targetBlock.id) : null
-  const isHovered = isOver || overId === `slot-${slotIndex}`
-  const isActiveDrag = activeId === `palette-${targetId}`
+  const isHovered = isOver || overId === `slot-${index}`
+  const isActiveDrag = activeId === `palette-${step.id}`
   const isValidTarget = isActiveDrag && isHovered
+  const StepIcon = getBlockIcon(step.id)
 
   return (
     <div ref={setNodeRef} className="flex flex-col items-center">
       <div
         className={`w-full rounded-xl border-2 transition-all min-h-[52px] ${
-          isSlotFilled
-            ? 'border-dashed border-slate-700/20 bg-transparent'
-            : isValidTarget
-            ? `border-solid ${colors.border} ${colors.bg} shadow-lg ${colors.glow} scale-[1.02]`
-            : isHovered && !isActiveDrag
-            ? 'border-dashed border-red-500/40 bg-red-500/5'
+          isCompleted
+            ? 'border-green-500/40 bg-green-500/5'
+            : isActive && isValidTarget
+            ? `border-solid ${colors.border} ${colors.bg} shadow-lg scale-[1.02]`
+            : isActive
+            ? 'border-dashed border-blue-500/40 bg-blue-500/5 animate-pulse'
+            : isLocked
+            ? 'border-dashed border-slate-700/20 bg-slate-900/10 opacity-50'
             : 'border-dashed border-slate-700/30 bg-slate-900/20'
         }`}
       >
-        {isSlotFilled && placedBlock ? (
-          <PlacedBlock block={placedBlock} index={slotIndex} onRemove={onRemove} topicKey={selectedTopic} />
-        ) : (
-          <div className="flex items-center gap-3 px-4 py-3">
-            <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center shrink-0 opacity-50`}>
-              {TargetIcon && <TargetIcon size={15} className={colors.text} />}
-            </div>
-            <span className="text-slate-500 text-xs leading-tight">
-              <span className={colors.text + ' font-medium'}>{targetBlock?.name?.tr || targetId}</span>
-              {' '}blogunu surukleyin
-            </span>
-            <span className="text-[10px] text-slate-700 bg-slate-900/50 px-1.5 py-0.5 rounded font-mono ml-auto shrink-0">
-              {slotIndex + 1}
-            </span>
+        <div className="flex items-center gap-3 px-4 py-3">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+            isCompleted ? 'bg-green-500/20' : isActive ? colors.bg : 'bg-slate-800/50'
+          }`}>
+            {isCompleted ? <Check size={15} className="text-green-400" />
+              : isLocked ? <Lock size={13} className="text-slate-600" />
+              : <StepIcon size={15} className={isActive ? colors.text : 'text-slate-500'} />}
           </div>
-        )}
+          <div className="flex-1 min-w-0">
+            <span className={`text-sm font-medium block truncate ${
+              isCompleted ? 'text-green-400' : isActive ? 'text-white' : 'text-slate-600'
+            }`}>
+              {index + 1}. {step.label?.tr || step.id}
+            </span>
+            {step.desc?.tr && !isLocked && (
+              <span className="text-[10px] text-slate-500">{step.desc.tr}</span>
+            )}
+            {result?.hash && (
+              <a
+                href={`https://testnet.monadexplorer.com/tx/${result.hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] text-purple-400 hover:text-purple-300 font-mono truncate block mt-0.5"
+              >
+                TX: {result.hash.slice(0, 10)}...
+              </a>
+            )}
+          </div>
+          <span className="text-[10px] text-slate-700 bg-slate-900/50 px-1.5 py-0.5 rounded font-mono shrink-0">
+            {index + 1}/{totalSteps}
+          </span>
+        </div>
       </div>
 
       {!isLast && (
         <div className="flex justify-center py-1">
-          <div className={`w-0.5 h-6 bg-gradient-to-b ${isSlotFilled ? colors.text + '/40' : 'from-slate-700/30 to-slate-700/10'}`} />
+          <div className={`w-0.5 h-6 bg-gradient-to-b ${
+            isCompleted ? 'from-green-500/40 to-green-500/10' :
+            isActive ? 'from-blue-500/40 to-slate-700/10' :
+            'from-slate-700/20 to-slate-700/10'
+          }`} />
         </div>
       )}
     </div>

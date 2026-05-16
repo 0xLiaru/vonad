@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther, formatEther, decodeEventLog } from 'viem'
-import { Info, Terminal, Gift, AlertTriangle, ShieldCheck, Zap, Loader2, Coins, Layers } from 'lucide-react'
+import { Terminal, Gift, AlertTriangle, ShieldCheck, Zap, Loader2, Coins, Layers, ExternalLink } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { usePaymaster } from '../hooks/usePaymaster.js'
 import { topics } from '../data/topics.js'
@@ -12,30 +12,19 @@ import TopicDetail from './RightPanel/TopicDetail'
 
 export default function RightPanel() {
   const { t } = useTranslation()
-  const {
-    selectedTopic,
-    isSimulating,
-    simulationOutput,
-    simulationComplete,
-    moduleCompleted,
-    completeModule,
-    walletAddress,
-    isDemoMode,
-  } = useApp()
+  const { selectedTopic, moduleCompleted, completeModule, walletAddress, isDemoMode, completedSteps, stepResults, currentStep, topicSteps } = useApp()
   const consoleRef = useRef(null)
 
-  useEffect(() => {
-    if (consoleRef.current) {
-      consoleRef.current.scrollTop = consoleRef.current.scrollHeight
-    }
-  }, [simulationOutput])
-
   const { isPremium, paymasterReady, bundlerAvailable, paymasterAddress } = usePaymaster()
+
+  useEffect(() => {
+    if (consoleRef.current) consoleRef.current.scrollTop = consoleRef.current.scrollHeight
+  }, [completedSteps, stepResults])
 
   return (
     <aside className="w-80 border-l border-slate-600/50 bg-slate-900/60 flex flex-col shrink-0">
       <div className="p-3 border-b border-slate-700/30 shrink-0">
-        <p className="text-white font-semibold text-sm">Detay</p>
+        <p className="text-white font-semibold text-sm">Konsol</p>
       </div>
       <div className="flex-1 flex flex-col min-h-0">
         <div className="flex-1 min-h-0">
@@ -45,112 +34,108 @@ export default function RightPanel() {
             </div>
           )}
         </div>
+        <ConsoleOutput
+          consoleRef={consoleRef}
+          selectedTopic={selectedTopic}
+          completedSteps={completedSteps}
+          stepResults={stepResults}
+          currentStep={currentStep}
+          topicSteps={topicSteps}
+          moduleCompleted={moduleCompleted}
+          completeModule={completeModule}
+          walletAddress={walletAddress}
+          isDemoMode={isDemoMode}
+          isPremium={isPremium}
+        />
       </div>
-      <SimulationConsole
-        consoleRef={consoleRef}
-        selectedTopic={selectedTopic}
-        isSimulating={isSimulating}
-        simulationOutput={simulationOutput}
-        simulationComplete={simulationComplete}
-        moduleCompleted={moduleCompleted}
-        completeModule={completeModule}
-        walletAddress={walletAddress}
-        isDemoMode={isDemoMode}
-        isPremium={isPremium}
-        paymasterReady={paymasterReady}
-        bundlerAvailable={bundlerAvailable}
-        paymasterAddress={paymasterAddress}
-        t={t}
-      />
     </aside>
   )
 }
 
-function SimulationConsole({
-  consoleRef,
-  selectedTopic,
-  isSimulating,
-  simulationOutput,
-  simulationComplete,
-  moduleCompleted,
-  completeModule,
-  walletAddress,
-  isDemoMode,
-  isPremium,
-  paymasterReady,
-  bundlerAvailable,
-  paymasterAddress,
-  t,
-}) {
+function ConsoleOutput({ consoleRef, selectedTopic, completedSteps, stepResults, currentStep, topicSteps, moduleCompleted, completeModule, walletAddress, isDemoMode, isPremium }) {
   const { address } = useAccount()
-  const { setShowShareModal, setShareData } = useApp()
-  const gasSponsored = isPremium && paymasterReady && bundlerAvailable
+  const { data: balance } = useBalance({ address, query: { enabled: !!address } })
+  const { setShowShareModal, setShareData, setShowAccount } = useApp()
+
+  const allDone = selectedTopic && completedSteps.length >= (topicSteps?.length || 0)
+
+  if (!selectedTopic) {
+    return (
+      <div className="border-t border-slate-700/30 p-3 bg-slate-950/30 shrink-0">
+        <div className="flex items-center gap-2 mb-2">
+          <Terminal size={13} className="text-purple-400" />
+          <span className="text-slate-400 text-xs font-medium">Konsol</span>
+        </div>
+        <p className="text-slate-600 text-xs">$</p>
+      </div>
+    )
+  }
 
   return (
-    <div className="border-t border-slate-700/30 flex flex-col shrink-0 bg-slate-950/30" style={{ maxHeight: '40%' }}>
-      <div className="h-8 border-b border-slate-700/30 flex items-center px-3 gap-2 bg-slate-900/30 shrink-0">
+    <div ref={consoleRef} className="border-t border-slate-700/30 p-3 bg-slate-950/30 shrink-0 overflow-y-auto" style={{ maxHeight: '40%' }}>
+      <div className="flex items-center gap-2 mb-3">
         <Terminal size={13} className="text-purple-400" />
         <span className="text-slate-400 text-xs font-medium">Konsol</span>
-        {isSimulating && <span className="ml-auto w-2 h-2 rounded-full bg-purple-400 animate-pulse" />}
-        {gasSponsored && <span className="ml-auto w-2 h-2 rounded-full bg-green-400" title="Gas sponsoru aktif" />}
       </div>
-      <div ref={consoleRef} className="flex-1 p-3 font-mono text-xs overflow-y-auto min-h-0">
-        {selectedTopic ? (
-          <div className="space-y-1.5">
-            <div className="text-purple-400/80">$ vonad load --topic {selectedTopic}</div>
-            {isDemoMode ? (
-              <div className="flex items-center gap-2 text-yellow-400/80"><AlertTriangle size={12} /><span>Demo - {walletAddress}</span></div>
-            ) : (
-              <div className="flex items-center gap-2 text-green-400/80"><ShieldCheck size={12} /><span>Bagli: {walletAddress}</span></div>
-            )}
-            {gasSponsored && <div className="flex items-center gap-2 text-green-400/80"><Zap size={12} /><span>Gas Sponsoru aktif</span></div>}
-            {isPremium && !paymasterReady && !isDemoMode && <div className="text-yellow-400/80 text-[10px]">Paymaster deposu bos</div>}
-
-            {simulationOutput.length > 0 && (
-              <>
-                <div className="text-purple-400/80 mt-2">$ vonad simulate{isDemoMode ? ' --demo' : ' --live'}</div>
-                {simulationOutput.map((line, i) => (
-                  <div key={i} className="text-green-400/80 animate-[fadeIn_0.3s_ease-out]">
-                    <span className="text-slate-600 mr-1">[{i + 1}]</span>{line}
-                  </div>
-                ))}
-                {isSimulating && <span className="inline-block w-2 h-4 bg-green-400 animate-pulse ml-1" />}
-              </>
-            )}
-
-            {simulationComplete && !moduleCompleted && (
-              <div className="mt-3 pt-3 border-t border-slate-700/30">
-                <div className="text-yellow-400/90 font-medium mb-2 text-xs">Simulasyon tamamlandi!</div>
-                <button onClick={completeModule}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-medium hover:from-purple-600 hover:to-blue-600 transition-all">
-                  <Gift size={14} />
-                  {isDemoMode ? 'Modulu Tamamla' : 'Modulu Tamamla ve NFT Kazan'}
-                </button>
-              </div>
-            )}
-
-            {moduleCompleted && !isDemoMode && address && (
-              <MintAction topicKey={selectedTopic} address={address} setShowShareModal={setShowShareModal} setShareData={setShareData} />
-            )}
-            {moduleCompleted && isDemoMode && (
-              <div className="mt-3 pt-3 border-t border-slate-700/30"><div className="text-yellow-400/90 font-medium mb-1 text-xs">Demo Tamamlandi!</div></div>
-            )}
-            {simulationOutput.length === 0 && !simulationComplete && (
-              <div className="text-slate-500 mt-2 text-[10px]">Bloklari dogru slotlara surukleyin, dogrulayin ve calistirin.</div>
-            )}
-          </div>
+      <div className="space-y-1.5 font-mono text-xs">
+        <div className="text-purple-400/80">$ vonad load --topic {selectedTopic}</div>
+        {isDemoMode ? (
+          <div className="flex items-center gap-2 text-yellow-400/80"><AlertTriangle size={12} /><span>Demo - {walletAddress}</span></div>
         ) : (
-          <div className="text-slate-500 text-xs">$</div>
+          <div className="flex items-center gap-2 text-green-400/80"><ShieldCheck size={12} /><span>Bagli: {walletAddress}</span></div>
+        )}
+
+        {balance && (
+          <div className="text-slate-400/80">Bakiye: {Number(formatEther(balance.value)).toFixed(4)} MON</div>
+        )}
+
+        {/* Step results */}
+        {completedSteps.map((stepIdx) => {
+          const result = stepResults[stepIdx]
+          if (!result) return null
+          const step = topicSteps?.[stepIdx]
+          return (
+            <div key={stepIdx} className="text-green-400/80 flex items-center gap-1.5">
+              <span className="text-green-500">✓</span>
+              <span>{step?.label?.tr || stepIdx + 1}</span>
+              {result.hash && (
+                <a href={`https://testnet.monadexplorer.com/tx/${result.hash}`} target="_blank" rel="noopener noreferrer"
+                  className="text-purple-400 hover:text-purple-300 ml-auto flex items-center gap-1">
+                  <ExternalLink size={10} /> TX
+                </a>
+              )}
+            </div>
+          )
+        })}
+
+        {currentStep < (topicSteps?.length || 0) && !completedSteps.includes(currentStep) && (
+          <div className="text-blue-400/80 animate-pulse">
+            → {topicSteps?.[currentStep]?.label?.tr || 'Sonraki adim'} blogunu surukleyin
+          </div>
+        )}
+
+        {allDone && !moduleCompleted && (
+          <div className="mt-3 pt-3 border-t border-slate-700/30">
+            <div className="text-yellow-400/90 text-xs mb-2">Tum adimlar tamamlandi!</div>
+            <button onClick={completeModule}
+              className="w-full px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-medium hover:from-purple-600 hover:to-blue-600">
+              <Gift size={12} className="inline mr-1" />
+              {isDemoMode ? 'Modulu Tamamla' : 'Modulu Tamamla ve NFT Kazan'}
+            </button>
+          </div>
+        )}
+
+        {moduleCompleted && !isDemoMode && address && (
+          <MintAction topicKey={selectedTopic} address={address} setShowShareModal={setShowShareModal} setShareData={setShareData} setShowAccount={setShowAccount} />
         )}
       </div>
     </div>
   )
 }
 
-function MintAction({ topicKey, address, setShowShareModal, setShareData }) {
+function MintAction({ topicKey, address, setShowShareModal, setShareData, setShowAccount }) {
   const topic = topics[topicKey]
   const moduleName = topic?.modules?.tr?.[0] || topic?.name?.tr || topicKey
-  const { setShowAccount } = useApp()
 
   const { data: mintFee } = useReadContract({
     address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI, functionName: 'mintFee',
@@ -170,18 +155,10 @@ function MintAction({ topicKey, address, setShowShareModal, setShareData }) {
       try {
         const decoded = decodeEventLog({ abi: ACHIEVEMENT_NFT_ABI, data: log.data, topics: log.topics })
         if (decoded.eventName === 'AchievementMinted') return decoded.args.tokenId?.toString()
-      } catch { /* event parse error */ }
+      } catch { /* ignore */ }
     }
     return null
   }, [isSuccess, receipt])
-
-  const handleMint = () => {
-    writeContract({
-      address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI,
-      functionName: 'mintAchievement', args: [address, moduleName, topicKey],
-      value: mintFee || parseEther('0.001'),
-    })
-  }
 
   useEffect(() => {
     if (isSuccess && receipt && !scoreUpdated.current) {
@@ -193,36 +170,25 @@ function MintAction({ topicKey, address, setShowShareModal, setShareData }) {
 
   if (isSuccess && receipt) {
     return (
-      <div className="mt-3 pt-3 border-t border-slate-700/30 space-y-2">
-        <div className="text-green-400/90 font-medium text-xs">NFT basariyla mint edildi!{mintedTokenId && <span className="text-purple-400 ml-1">#{mintedTokenId}</span>}</div>
+      <div className="mt-2 space-y-2">
+        <div className="text-green-400/90 text-xs">NFT mint edildi!{mintedTokenId && <span className="text-purple-400 ml-1">#{mintedTokenId}</span>}</div>
         <button onClick={() => { setShareData({ topicKey, moduleName, tokenId: mintedTokenId || '?', txHash: hash }); setShowShareModal(true) }}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[#1d9bf0] hover:bg-[#1a8cd8] text-white text-xs font-medium transition-colors">
-          <Gift size={14} />Paylas
-        </button>
-        <button onClick={() => setShowAccount(true)}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700/50 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-colors">
-          <Layers size={14} />Hesabimda Stake Et
-        </button>
+          className="w-full px-3 py-2 rounded-lg bg-[#1d9bf0] hover:bg-[#1a8cd8] text-white text-xs font-medium">Paylas</button>
       </div>
     )
   }
 
   if (isPending || isConfirming) {
-    return (
-      <div className="mt-3 pt-3 border-t border-slate-700/30">
-        <div className="flex items-center gap-2 text-purple-400"><Loader2 size={14} className="animate-spin" /><span className="text-xs">{isConfirming ? 'Islem onaylaniyor...' : 'Onay bekleniyor...'}</span></div>
-        {hash && <div className="text-slate-600 text-[10px] mt-1 font-mono truncate">TX: {hash.slice(0, 14)}...</div>}
-      </div>
-    )
+    return <div className="mt-2 flex items-center gap-2 text-purple-400 text-xs"><Loader2 size={12} className="animate-spin" />{isConfirming ? 'Onaylaniyor...' : 'Onay bekleniyor...'}</div>
   }
 
   return (
-    <div className="mt-3 pt-3 border-t border-slate-700/30">
-      <div className="text-yellow-400/90 font-medium text-xs mb-1">Modul tamamlandi!</div>
-      <div className="text-slate-400 text-[10px] mb-3">NFT mint etmek icin onay verin ({feeNumeric} MON)</div>
-      <button onClick={handleMint}
-        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs font-medium hover:from-yellow-600 hover:to-orange-600 transition-all">
-        <Coins size={14} />Gercek NFT Kazan
+    <div className="mt-2 space-y-2">
+      <div className="text-yellow-400/90 text-xs">Modul tamamlandi!</div>
+      <div className="text-slate-400 text-[10px]">NFT mint ({feeNumeric} MON)</div>
+      <button onClick={() => writeContract({ address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI, functionName: 'mintAchievement', args: [address, moduleName, topicKey], value: mintFee || parseEther('0.001') })}
+        className="w-full px-3 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs font-medium hover:from-yellow-600 hover:to-orange-600">
+        <Coins size={12} className="inline mr-1" />Gercek NFT Kazan
       </button>
     </div>
   )
