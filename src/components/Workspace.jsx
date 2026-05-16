@@ -72,7 +72,7 @@ export default function Workspace() {
       if (blockId === 'wallet-transfer') {
         if (!isConnected) throw new Error('Once cuzdan baglayin')
         setTxState({ status: 'confirming', step: currentStep, blockId })
-        sendTransaction({ to: '0x0000000000000000000000000000000000000000', value: parseEther('0.001') }, {
+        sendTransaction({ to: '0x6d7E4C86eE6Db8E1FfA59F24031f68A8109ff9BF', value: parseEther('0.001') }, {
           onSuccess: (hash) => {
             completeStep({ success: true, blockId, hash, result: 'Transfer basarili' })
             setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Transfer basarili' })
