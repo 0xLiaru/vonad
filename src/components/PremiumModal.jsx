@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { formatEther } from 'viem'
+import { formatEther, parseEther } from 'viem'
 import { X, Crown, ShieldCheck, Loader2 } from 'lucide-react'
 import { PREMIUM_SUBSCRIPTION_ABI, STAKING_DISCOUNT_ABI, ESCROW_ABI } from '../contracts/abis.js'
 import { PREMIUM_SUBSCRIPTION_ADDRESS, STAKING_DISCOUNT_ADDRESS, ESCROW_ADDRESS } from '../contracts/addresses.js'
@@ -10,13 +10,6 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
   const { address } = useAccount()
   const [step, setStep] = useState('confirm')
   const [txHash, setTxHash] = useState(null)
-
-  const { data: priceWei } = useReadContract({
-    address: PREMIUM_SUBSCRIPTION_ADDRESS,
-    abi: PREMIUM_SUBSCRIPTION_ABI,
-    functionName: 'ESCROW_PRICE',
-    query: { enabled: open },
-  })
 
   const { data: priceInMon } = useReadContract({
     address: PREMIUM_SUBSCRIPTION_ADDRESS,
@@ -85,7 +78,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
       address: ESCROW_ADDRESS,
       abi: ESCROW_ABI,
       functionName: 'depositForPremium',
-      value: priceInMon || (priceWei || 10000000000000000n),
+      value: priceInMon || parseEther('0.01'),
     })
   }
 

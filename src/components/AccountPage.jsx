@@ -37,10 +37,7 @@ function AccountPage({ open, onClose }) {
 
 function AccountTabs() {
   const { address } = useAccount()
-  const [tab, setTab] = (function () {
-    const { useState } = require('react')
-    return useState('account')
-  })()
+  const [tab, setTab] = useState('account')
 
   const { data: owner } = useReadContract({
     address: PREMIUM_SUBSCRIPTION_ADDRESS,

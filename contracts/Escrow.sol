@@ -13,7 +13,6 @@ contract Escrow is Ownable, Pausable, ReentrancyGuard {
     IPremiumSubscriptionExternal public premiumSubscription;
 
     uint256 public constant LOCK_DURATION = 30 days;
-    uint256 public constant PREMIUM_PRICE = 0.01 ether;
 
     struct Deposit {
         address user;
@@ -57,7 +56,7 @@ contract Escrow is Ownable, Pausable, ReentrancyGuard {
     }
 
     function depositForPremium() external payable nonReentrant whenNotPaused {
-        require(msg.value == PREMIUM_PRICE, "Exact 0.01 MON required");
+        require(msg.value > 0, "Payment required");
 
         uint256 depositId = deposits.length;
         deposits.push(

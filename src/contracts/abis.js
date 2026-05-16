@@ -116,3 +116,4 @@ export const MON_PRICE_ORACLE_ABI = [
   { type: "function", name: "owner", outputs: [{ type: "address" }], stateMutability: "view" },
   { type: "event", name: "PriceUpdated", inputs: [{ indexed: false, name: "newPrice", type: "int256" }, { indexed: false, name: "timestamp", type: "uint256" }] },
 ]
+
