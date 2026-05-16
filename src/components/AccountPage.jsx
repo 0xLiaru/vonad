@@ -13,9 +13,7 @@ import {
 import { topics, allTopicKeys } from '../data/topics.js'
 import { getTopicIcon } from '../data/topicIcons.js'
 
-export { AccountPage as default }
-
-function AccountPage({ open, onClose }) {
+export default function AccountPage({ open, onClose }) {
   if (!open) return null
 
   return (
