@@ -3,6 +3,8 @@ import { useAccount } from 'wagmi'
 import { useApp } from '../context/AppContext.jsx'
 import { topics, allTopicKeys, difficultyLabels, difficultyColors } from '../data/topics.js'
 import { ArrowRight, Crown, Check, Lock, Zap, Shield } from 'lucide-react'
+import { getTopicIcon } from '../data/topicIcons.js'
+
 
 export default function HomePage() {
   const { i18n } = useTranslation()
@@ -129,5 +131,6 @@ function TopicCard({ topicKey, lang, selectTopic, isFree = false }) {
     </button>
   )
 }
+
 
 

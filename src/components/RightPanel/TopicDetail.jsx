@@ -2,6 +2,8 @@
 import { topics, difficultyLabels, difficultyColors } from '../../data/topics.js'
 import { useApp } from '../../context/AppContext.jsx'
 import { BookOpen, TrendingUp, Layers, Lightbulb } from 'lucide-react'
+import { getTopicIcon } from '../../data/topicIcons.js'
+
 
 export default function TopicDetail() {
   const { t, i18n } = useTranslation()
@@ -87,5 +89,6 @@ export default function TopicDetail() {
     </div>
   )
 }
+
 
 

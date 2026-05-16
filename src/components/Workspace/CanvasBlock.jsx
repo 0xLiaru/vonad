@@ -1,4 +1,6 @@
 ﻿import { X } from 'lucide-react'
+import { getBlockIcon, getTopicColor } from '../../data/topicIcons.js'
+
 
 export function PlacedBlock({ block, index, onRemove, topicKey }) {
   const Icon = getBlockIcon(block.id)
@@ -22,5 +24,6 @@ export function PlacedBlock({ block, index, onRemove, topicKey }) {
     </div>
   )
 }
+
 
 

@@ -2,6 +2,8 @@
 import { useTranslation } from 'react-i18next'
 import { useAccount, useReadContract } from 'wagmi'
 import { Search, ArrowLeft, Lock, Unlock } from 'lucide-react'
+import { getTopicIcon, getBlockIcon } from '../data/topicIcons.js'
+
 import { topics, allTopicKeys, difficultyLabels, difficultyColors } from '../data/topics.js'
 import { useApp } from '../context/AppContext.jsx'
 import { PREMIUM_SUBSCRIPTION_ABI } from '../contracts/abis.js'
@@ -138,5 +140,6 @@ export default function LeftPanel() {
     </aside>
   )
 }
+
 
 

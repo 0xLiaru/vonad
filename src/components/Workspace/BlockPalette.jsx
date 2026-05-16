@@ -3,6 +3,8 @@ import { useAccount, useReadContract } from 'wagmi'
 import { Lock, AlertTriangle, CheckCircle } from 'lucide-react'
 import { PREMIUM_SUBSCRIPTION_ABI, USER_PROGRESS_ABI } from '../../contracts/abis.js'
 import { PREMIUM_SUBSCRIPTION_ADDRESS, USER_PROGRESS_ADDRESS } from '../../contracts/addresses.js'
+import { getBlockIcon } from '../../data/topicIcons.js'
+
 
 export default function BlockPalette({ selectedTopic, topicSteps, currentStep, completedSteps }) {
   const { address, isConnected } = useAccount()
@@ -118,5 +120,6 @@ function PaletteBlock({ block }) {
     </div>
   )
 }
+
 
 

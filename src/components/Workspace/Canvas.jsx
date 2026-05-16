@@ -2,6 +2,8 @@
 import { useApp } from '../../context/AppContext.jsx'
 import BlockPalette from './BlockPalette'
 import { Check, Lock, Blocks } from 'lucide-react'
+import { getBlockIcon, getTopicColor } from '../../data/topicIcons.js'
+
 
 export default function Canvas({ activeId, overId }) {
   const { selectedTopic, topicSteps, currentStep, completedSteps, stepResults } = useApp()
@@ -133,5 +135,6 @@ function StepSlot({ index, step, isCompleted, isActive, isLocked, result, colors
     </div>
   )
 }
+
 
 
