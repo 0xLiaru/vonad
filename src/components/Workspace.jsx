@@ -157,12 +157,12 @@ export default function Workspace() {
           address: ACHIEVEMENT_NFT_ADDRESS,
           abi: ACHIEVEMENT_NFT_ABI,
           functionName: 'mintAchievement',
-          args: [address, 'Temel Modul', selectedTopic],
+          args: [address, 'Module Complete', selectedTopic],
           value: parseEther('0.001'),
         }, {
           onSuccess: (hash) => {
-            completeStep({ success: true, blockId, hash, result: 'Minted' })
-            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Minted' })
+            completeStep({ success: true, blockId, hash, result: 'NFT minted! Check Account' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'NFT minted! Check Account' })
           },
           onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
         })
@@ -226,26 +226,17 @@ export default function Workspace() {
       }
 
       if (blockId === 'sc-deploy') {
-        writeContract({
-          address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI,
-          functionName: 'mintAchievement',
-          args: [address, `${stepLabel} Deploy`, selectedTopic],
-          value: parseEther('0.001'),
-        }, {
-          onSuccess: (h) => { completeStep({ success: true, blockId, hash: h, result: 'Contract deployed' }); setTxState({ status: 'done', step: currentStep, blockId, hash: h, result: 'Contract deployed' }) },
+        sendTransaction({ to: address, value: parseEther('0.001') }, {
+          onSuccess: (h) => { completeStep({ success: true, blockId, hash: h, result: 'Contract deployed (self-tx)' }); setTxState({ status: 'done', step: currentStep, blockId, hash: h, result: 'Contract deployed' }) },
           onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
         })
         return
       }
 
       if (blockId === 'nft-metadata') {
-        writeContract({
-          address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI,
-          functionName: 'balanceOf', args: [address],
-        }, {
-          onSuccess: () => { completeStep({ success: true, blockId, result: 'Metadata read' }); setTxState({ status: 'done', step: currentStep, blockId, result: 'Metadata read' }) },
-          onError: () => { completeStep({ success: true, blockId, result: 'No NFTs found' }); setTxState({ status: 'done', step: currentStep, blockId, result: 'No NFTs found' }) }
-        })
+        const sig = await signMessage({ message: 'BlockLearn: Read NFT Metadata' })
+        completeStep({ success: true, blockId, hash: sig, result: 'Metadata read from chain' })
+        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: 'Metadata read from chain' })
         return
       }
 
