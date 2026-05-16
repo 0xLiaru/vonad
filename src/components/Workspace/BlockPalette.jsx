@@ -72,7 +72,7 @@ function PaletteBlock({ block, isPremium }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `palette-${block.id}`,
     data: { type: 'palette', blockId: block.id },
-    disabled: isLocked || isAlreadyDone,
+    disabled: isLocked,
   })
 
   const style = transform
@@ -81,10 +81,10 @@ function PaletteBlock({ block, isPremium }) {
 
   if (isAlreadyDone) {
     return (
-      <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-green-500/10 border border-green-500/30">
+      <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-green-500/10 border-2 border-green-500/40 cursor-grab active:cursor-grabbing hover:bg-green-500/20 transition-all min-w-[180px]">
         <CheckCircle size={24} className="text-green-400" />
         <span className="text-sm text-green-400 font-medium">Cuzdan zaten bagli!</span>
-        <span className="text-[10px] text-slate-400 text-center">Blogu surukleyin, adim otomatik tamamlanir</span>
+        <span className="text-[10px] text-slate-400 text-center">Surukleyin, otomatik tamamlanir</span>
       </div>
     )
   }
