@@ -284,25 +284,25 @@ export default function Workspace() {
         </div>
 
         {wrongDrop && (
-          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-red-500/90 text-white text-xs px-4 py-2 rounded-lg z-50">
+          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-600 text-white text-xs px-4 py-2 rounded-lg z-50">
             Yanlis slot! Dogru Stepa surukleyin.
           </div>
         )}
 
         {txState?.status === 'pending' && (
-          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-blue-500/90 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
+          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-600 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
             <Loader2 size={14} className="animate-spin" />
             Islem baslatiliyor...
           </div>
         )}
         {txState?.status === 'confirming' && (
-          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-blue-500/90 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
+          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-600 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
             <Loader2 size={14} className="animate-spin" />
             Cuzdan onayi bekleniyor...
           </div>
         )}
         {txState?.status === 'done' && txState.result && (
-          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-green-500/90 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
+          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-600 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
             <CheckCircle size={14} />
             {txState.hash
               ? <a href={`https://testnet.monadexplorer.com/tx/${txState.hash}`} target="_blank" rel="noopener noreferrer" className="underline">TX: {txState.hash.slice(0, 10)}...</a>
@@ -310,7 +310,7 @@ export default function Workspace() {
           </div>
         )}
         {txState?.status === 'error' && (
-          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-red-500/90 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
+          <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-600 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
             <XCircle size={14} />
             {txState.error || 'Rejected'}
           </div>
@@ -335,5 +335,6 @@ export default function Workspace() {
     </main>
   )
 }
+
 
 

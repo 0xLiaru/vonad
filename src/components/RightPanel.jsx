@@ -75,7 +75,7 @@ function ConsoleOutput({ consoleRef, selectedTopic, completedSteps, stepResults,
     return (
       <div className="border-t border-slate-700/30 p-3 bg-slate-950/30 shrink-0">
         <div className="flex items-center gap-2 mb-2">
-          <Terminal size={13} className="text-purple-400" />
+          <Terminal size={13} className="text-slate-300" />
           <span className="text-slate-400 text-xs font-medium">Console</span>
         </div>
         <p className="text-slate-600 text-xs">$</p>
@@ -86,15 +86,15 @@ function ConsoleOutput({ consoleRef, selectedTopic, completedSteps, stepResults,
   return (
     <div ref={consoleRef} className="border-t border-slate-700/30 p-3 bg-slate-950/30 shrink-0 overflow-y-auto" style={{ maxHeight: '40%' }}>
       <div className="flex items-center gap-2 mb-3">
-        <Terminal size={13} className="text-purple-400" />
+        <Terminal size={13} className="text-slate-300" />
         <span className="text-slate-400 text-xs font-medium">Console</span>
       </div>
       <div className="space-y-1.5 font-mono text-xs">
-        <div className="text-purple-400/80">$ vonad load --topic {selectedTopic}</div>
+        <div className="text-slate-300">$ vonad load --topic {selectedTopic}</div>
         {isDemoMode ? (
-          <div className="flex items-center gap-2 text-yellow-400/80"><AlertTriangle size={12} /><span>Demo - {walletAddress}</span></div>
+          <div className="flex items-center gap-2 text-slate-300"><AlertTriangle size={12} /><span>Demo - {walletAddress}</span></div>
         ) : (
-          <div className="flex items-center gap-2 text-green-400/80"><ShieldCheck size={12} /><span>Connected: {walletAddress}</span></div>
+          <div className="flex items-center gap-2 text-slate-300"><ShieldCheck size={12} /><span>Connected: {walletAddress}</span></div>
         )}
 
         {balance && (
@@ -107,12 +107,12 @@ function ConsoleOutput({ consoleRef, selectedTopic, completedSteps, stepResults,
           if (!result) return null
           const step = topicSteps?.[stepIdx]
           return (
-            <div key={stepIdx} className="text-green-400/80 flex items-center gap-1.5">
-              <span className="text-green-500">✓</span>
+            <div key={stepIdx} className="text-slate-300 flex items-center gap-1.5">
+              <span className="text-white">✓</span>
               <span>{step?.label?.tr || stepIdx + 1}</span>
               {result.hash && (
                 <a href={`https://testnet.monadexplorer.com/tx/${result.hash}`} target="_blank" rel="noopener noreferrer"
-                  className="text-purple-400 hover:text-purple-300 ml-auto flex items-center gap-1">
+                  className="text-slate-300 hover:text-purple-300 ml-auto flex items-center gap-1">
                   <ExternalLink size={10} /> TX
                 </a>
               )}
@@ -121,14 +121,14 @@ function ConsoleOutput({ consoleRef, selectedTopic, completedSteps, stepResults,
         })}
 
         {currentStep < (topicSteps?.length || 0) && !completedSteps.includes(currentStep) && (
-          <div className="text-blue-400/80 animate-pulse">
+          <div className="text-slate-300 animate-pulse">
             → {topicSteps?.[currentStep]?.label?.tr || 'Sonraki Step'} block
           </div>
         )}
 
         {allDone && !moduleCompleted && (
           <div className="mt-3 pt-3 border-t border-slate-700/30">
-            <div className="text-yellow-400/90 text-xs mb-2">Tum Steplar Done!</div>
+            <div className="text-white text-xs mb-2">Tum Steplar Done!</div>
             <button onClick={completeModule}
               className="w-full px-3 py-2 rounded-lg bg-gradient-to-r bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium hover:from-purple-600 hover:to-blue-600">
               <Gift size={12} className="inline mr-1" />
@@ -183,20 +183,20 @@ function MintAction({ topicKey, address, setShowShareModal, setShareData, setSho
   if (isSuccess && receipt) {
     return (
       <div className="mt-2 space-y-2">
-        <div className="text-green-400/90 text-xs">Minted!{mintedTokenId && <span className="text-purple-400 ml-1">#{mintedTokenId}</span>}</div>
+        <div className="text-white text-xs">Minted!{mintedTokenId && <span className="text-slate-300 ml-1">#{mintedTokenId}</span>}</div>
         <button onClick={() => { setShareData({ topicKey, moduleName, tokenId: mintedTokenId || '?', txHash: hash }); setShowShareModal(true) }}
-          className="w-full px-3 py-2 rounded-lg bg-[#1d9bf0] hover:bg-[#1a8cd8] text-white text-xs font-medium">Share</button>
+          className="w-full px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium">Share</button>
       </div>
     )
   }
 
   if (isPending || isConfirming) {
-    return <div className="mt-2 flex items-center gap-2 text-purple-400 text-xs"><Loader2 size={12} className="animate-spin" />{isConfirming ? 'Onaylaniyor...' : 'Approving...'}</div>
+    return <div className="mt-2 flex items-center gap-2 text-slate-300 text-xs"><Loader2 size={12} className="animate-spin" />{isConfirming ? 'Onaylaniyor...' : 'Approving...'}</div>
   }
 
   return (
     <div className="mt-2 space-y-2">
-      <div className="text-yellow-400/90 text-xs">Modul Done!</div>
+      <div className="text-white text-xs">Modul Done!</div>
       <div className="text-slate-400 text-[10px]">NFT mint ({feeNumeric} MON)</div>
       <button onClick={() => writeContract({ address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI, functionName: 'mintAchievement', args: [address, moduleName, topicKey], value: mintFee || parseEther('0.001') })}
         className="w-full px-3 py-2 rounded-lg bg-gradient-to-r bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium hover:from-yellow-600 hover:to-orange-600">
@@ -205,5 +205,6 @@ function MintAction({ topicKey, address, setShowShareModal, setShareData, setSho
     </div>
   )
 }
+
 
 

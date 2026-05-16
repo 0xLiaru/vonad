@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+﻿import { createContext, useContext, useState, useCallback } from 'react'
 import { AlertTriangle, XCircle, CheckCircle, X } from 'lucide-react'
 
 const ToastContext = createContext(null)
@@ -38,10 +38,10 @@ function ToastItem({ toast, onClose }) {
   const { type, title, message } = toast
 
   const colors = {
-    error: 'border-red-500/30 bg-red-500/10 text-red-400',
-    warning: 'border-yellow-500/30 bg-yellow-500/10 text-yellow-400',
-    success: 'border-green-500/30 bg-green-500/10 text-green-400',
-    info: 'border-blue-500/30 bg-blue-500/10 text-blue-400',
+    error: 'border-slate-600 bg-slate-800 text-slate-200',
+    warning: 'border-slate-600 bg-slate-800 text-slate-200',
+    success: 'border-slate-600 bg-slate-800 text-slate-200',
+    info: 'border-slate-600 bg-slate-800 text-slate-200',
   }
 
   const icons = {
@@ -74,3 +74,4 @@ export function useToast() {
   if (!ctx) throw new Error('useToast must be used within ToastProvider')
   return ctx
 }
+

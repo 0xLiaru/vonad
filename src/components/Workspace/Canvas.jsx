@@ -79,11 +79,11 @@ function StepSlot({ index, step, isCompleted, isActive, isLocked, result, colors
       <div
         className={`w-full rounded-xl border-2 transition-all min-h-[52px] ${
           isCompleted
-            ? 'border-green-500/40 bg-green-500/5'
+            ? 'border-slate-500/40 bg-slate-700/10'
             : isActive && isValidTarget
             ? `border-solid ${colors.border} ${colors.bg} shadow-lg scale-[1.02]`
             : isActive
-            ? 'border-dashed border-blue-500/40 bg-blue-500/5 animate-pulse'
+            ? 'border-dashed border-slate-400/40 bg-slate-700/10 '
             : isLocked
             ? 'border-dashed border-slate-700/20 bg-slate-900/10 opacity-50'
             : 'border-dashed border-slate-700/30 bg-slate-900/20'
@@ -91,15 +91,15 @@ function StepSlot({ index, step, isCompleted, isActive, isLocked, result, colors
       >
         <div className="flex items-center gap-3 px-4 py-3">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-            isCompleted ? 'bg-green-500/20' : isActive ? colors.bg : 'bg-slate-800/50'
+            isCompleted ? 'bg-slate-700/30' : isActive ? colors.bg : 'bg-slate-800/50'
           }`}>
-            {isCompleted ? <Check size={15} className="text-green-400" />
+            {isCompleted ? <Check size={15} className="text-white" />
               : isLocked ? <Lock size={13} className="text-slate-600" />
               : <StepIcon size={15} className={isActive ? colors.text : 'text-slate-500'} />}
           </div>
           <div className="flex-1 min-w-0">
             <span className={`text-sm font-medium block truncate ${
-              isCompleted ? 'text-green-400' : isActive ? 'text-white' : 'text-slate-600'
+              isCompleted ? 'text-white' : isActive ? 'text-white' : 'text-slate-600'
             }`}>
               {index + 1}. {step.label?.tr || step.id}
             </span>
@@ -126,8 +126,8 @@ function StepSlot({ index, step, isCompleted, isActive, isLocked, result, colors
       {!isLast && (
         <div className="flex justify-center py-1">
           <div className={`w-0.5 h-6 bg-gradient-to-b ${
-            isCompleted ? 'from-green-500/40 to-green-500/10' :
-            isActive ? 'from-blue-500/40 to-slate-700/10' :
+            isCompleted ? 'from-slate-500/40 to-slate-500/10' :
+            isActive ? 'from-slate-500/30 to-slate-700/10' :
             'from-slate-700/20 to-slate-700/10'
           }`} />
         </div>
@@ -135,6 +135,7 @@ function StepSlot({ index, step, isCompleted, isActive, isLocked, result, colors
     </div>
   )
 }
+
 
 
 
