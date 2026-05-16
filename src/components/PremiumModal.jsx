@@ -47,7 +47,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
 
   if (!open) return null
 
-  const fullPrice = 350
+  const fullPrice = 100
   const count = stakedCount ? Number(stakedCount) : 0
   const discountPct = discount ? Number(discount) : 0
   const discountedPrice = fullPrice * (1 - discountPct / 100)
