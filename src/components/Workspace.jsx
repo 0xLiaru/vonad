@@ -31,24 +31,6 @@ export default function Workspace() {
   const handleDragStart = useCallback((e) => setActiveId(e.active.id), [])
   const handleDragOver = useCallback((e) => setOverId(e.over?.id || null), [])
 
-  const handleDragEnd = useCallback((event) => {
-    const { active, over } = event
-    setActiveId(null)
-    setOverId(null)
-    if (!over) return
-
-    const ad = active.data.current
-    const od = over.data.current
-    if (ad?.type === 'palette' && od?.type === 'slot') {
-      if (ad.blockId === od.targetId && od.slotIndex === currentStep) {
-        executeStepAction(ad.blockId)
-      } else {
-        setWrongDrop(ad.blockId)
-        setTimeout(() => setWrongDrop(null), 700)
-      }
-    }
-  }, [currentStep, executeStepAction])
-
   const executeStepAction = useCallback(async (blockId) => {
     const activeStep = topicSteps[currentStep]
     if (!activeStep) return
@@ -239,6 +221,23 @@ export default function Workspace() {
       setTxState({ status: 'error', step: currentStep, blockId, error: err?.message || 'Islem reddedildi' })
     }
   }, [currentStep, topicSteps, isConnected, address, selectedTopic, connect, connectors, signMessage, sendTransaction, writeContract, completeStep])
+
+  const handleDragEnd = useCallback((event) => {
+    const { active, over } = event
+    setActiveId(null)
+    setOverId(null)
+    if (!over) return
+    const ad = active.data.current
+    const od = over.data.current
+    if (ad?.type === 'palette' && od?.type === 'slot') {
+      if (ad.blockId === od.targetId && od.slotIndex === currentStep) {
+        executeStepAction(ad.blockId)
+      } else {
+        setWrongDrop(ad.blockId)
+        setTimeout(() => setWrongDrop(null), 700)
+      }
+    }
+  }, [currentStep, executeStepAction])
 
   const allDone = completedSteps.length >= topicSteps.length
 
