@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { DndContext, PointerSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core'
 import { useConnect, useAccount, useBalance, useSignMessage, useSendTransaction, useWriteContract } from 'wagmi'
-import { parseEther } from 'viem'
+import { parseEther, getAddress } from 'viem'
 import { useApp } from '../context/AppContext.jsx'
 import { topics } from '../data/topics.js'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
@@ -20,7 +20,7 @@ export default function Workspace() {
   const [txState, setTxState] = useState(null) // { status: 'pending'|'confirming'|'done'|'error', hash?, step? }
   const [wrongDrop, setWrongDrop] = useState(null)
 
-  const USDC = '0xf817257fed379853cDe0fa4F97AB987181B1e5Ea'
+  const USDC = getAddress('0xf817257fed379853cde0fa4f97ab987181b1e5ea')
   const ZERO_ADDR = '0x0000000000000000000000000000000000000001'
 
   const { isConnected, address } = useAccount()
