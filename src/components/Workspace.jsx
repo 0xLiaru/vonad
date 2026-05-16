@@ -209,21 +209,57 @@ export default function Workspace() {
       if (!isConnected) throw new Error('Connect wallet')
       const stepLabel = topicSteps[currentStep]?.label?.tr || blockId
       setTxState({ status: 'confirming', step: currentStep, blockId })
-      // Use sendTransaction for transfer-like blocks, signMessage for others
-      const isTransferLike = ['defi-swap', 'l2-withdraw', 'bridge-unlock', 'mev-flashloan', 'x402-micropay', 'token-burn'].includes(blockId)
-      if (isTransferLike) {
-        sendTransaction({ to: '0x6d7E4C86eE6Db8E1FfA59F24031f68A8109ff9BF', value: 1n }, {
-          onSuccess: (hash) => {
-            completeStep({ success: true, blockId, hash, result: `${stepLabel} Done` })
-            setTxState({ status: 'done', step: currentStep, blockId, hash, result: `${stepLabel} Done` })
-          },
+
+      const sendTxBlocks = ['defi-swap', 'l2-withdraw', 'bridge-unlock', 'mev-flashloan', 'x402-micropay', 'defi-liquidity', 'staking-reward', 'paymaster-sponsor']
+
+      if (blockId === 'token-burn') {
+        writeContract({
+          address: USDC,
+          abi: [{ type: 'function', name: 'transfer', inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],
+          functionName: 'transfer',
+          args: ['0x0000000000000000000000000000000000000000', parseEther('1')],
+        }, {
+          onSuccess: (h) => { completeStep({ success: true, blockId, hash: h, result: 'Token burned' }); setTxState({ status: 'done', step: currentStep, blockId, hash: h, result: 'Token burned' }) },
           onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
         })
-      } else {
-        const sig = await signMessage({ message: `BlockLearn: ${stepLabel}` })
-        completeStep({ success: true, blockId, hash: sig, result: `${stepLabel} Done` })
-        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: `${stepLabel} Done` })
+        return
       }
+
+      if (blockId === 'sc-deploy') {
+        writeContract({
+          address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI,
+          functionName: 'mintAchievement',
+          args: [address, `${stepLabel} Deploy`, selectedTopic],
+          value: parseEther('0.001'),
+        }, {
+          onSuccess: (h) => { completeStep({ success: true, blockId, hash: h, result: 'Contract deployed' }); setTxState({ status: 'done', step: currentStep, blockId, hash: h, result: 'Contract deployed' }) },
+          onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
+        })
+        return
+      }
+
+      if (blockId === 'nft-metadata') {
+        writeContract({
+          address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI,
+          functionName: 'balanceOf', args: [address],
+        }, {
+          onSuccess: () => { completeStep({ success: true, blockId, result: 'Metadata read' }); setTxState({ status: 'done', step: currentStep, blockId, result: 'Metadata read' }) },
+          onError: () => { completeStep({ success: true, blockId, result: 'No NFTs found' }); setTxState({ status: 'done', step: currentStep, blockId, result: 'No NFTs found' }) }
+        })
+        return
+      }
+
+      if (sendTxBlocks.includes(blockId)) {
+        sendTransaction({ to: '0x6d7E4C86eE6Db8E1FfA59F24031f68A8109ff9BF', value: 1n }, {
+          onSuccess: (h) => { completeStep({ success: true, blockId, hash: h, result: `${stepLabel} Done` }); setTxState({ status: 'done', step: currentStep, blockId, hash: h, result: `${stepLabel} Done` }) },
+          onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
+        })
+        return
+      }
+
+      const sig = await signMessage({ message: `BlockLearn: ${stepLabel}` })
+      completeStep({ success: true, blockId, hash: sig, result: `${stepLabel} Done` })
+      setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: `${stepLabel} Done` })
     } catch (err) {
       setTxState({ status: 'error', step: currentStep, blockId, error: err?.message || 'Islem reddedildi' })
     }
