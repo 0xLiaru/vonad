@@ -24,18 +24,18 @@ export default function Header() {
   const toggleLang = () => i18n.changeLanguage(i18n.language === 'tr' ? 'en' : 'tr')
 
   const navItems = [
-    { icon: Home, label: 'Anasayfa', action: () => { setShowHomePage(true); setMenuOpen(false) } },
-    { icon: BookOpen, label: 'Ogren', action: () => { setShowHomePage(false); setMenuOpen(false) } },
-    { icon: Trophy, label: 'Liderlik', action: () => { setShowLeaderboard(true); setMenuOpen(false) } },
-    { icon: User, label: 'Hesabim', action: () => { setShowAccount(true); setMenuOpen(false) } },
+    { icon: Home, label: 'Home', action: () => { setShowHomePage(true); setMenuOpen(false) } },
+    { icon: BookOpen, label: 'Learn', action: () => { setShowHomePage(false); setMenuOpen(false) } },
+    { icon: Trophy, label: 'Leaderboard', action: () => { setShowLeaderboard(true); setMenuOpen(false) } },
+    { icon: User, label: 'Account', action: () => { setShowAccount(true); setMenuOpen(false) } },
   ]
 
   return (
     <header className="h-14 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0 relative z-50">
       {/* Logo */}
       <button onClick={() => setShowHomePage(true)} className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-          <span className="text-white font-bold text-sm">V</span>
+        <div className="w-8 h-8 rounded-lg overflow-hidden">
+          <img src="/logo.svg" alt="Vonad" className="w-full h-full" />
         </div>
         <span className="text-white font-semibold text-sm hidden sm:inline">{t('app.title')}</span>
       </button>
@@ -106,7 +106,7 @@ export default function Header() {
                 className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-yellow-400 hover:bg-slate-700 transition-colors border-t border-slate-700/50 mt-1 pt-2.5"
               >
                 <Crown size={15} />
-                Premium Al
+                Get Premium
               </button>
             )}
           </div>
@@ -115,3 +115,4 @@ export default function Header() {
     </header>
   )
 }
+

@@ -6,9 +6,9 @@ import { LEADERBOARD_ADDRESS } from '../contracts/addresses.js'
 import { SkeletonLine } from './Skeleton.jsx'
 
 const TABS = [
-  { key: 0, icon: Layers, label: { tr: 'En Cok Modul', en: 'Most Modules' } },
-  { key: 1, icon: Gift, label: { tr: 'En Cok NFT', en: 'Most NFTs' } },
-  { key: 2, icon: BookOpen, label: { tr: 'En Cok Konu', en: 'Most Topics' } },
+  { key: 0, icon: Layers, label: { tr: 'Modules', en: 'Most Modules' } },
+  { key: 1, icon: Gift, label: { tr: 'NFTs', en: 'Most NFTs' } },
+  { key: 2, icon: BookOpen, label: { tr: 'Topics', en: 'Most Topics' } },
 ]
 
 export default function LeaderboardPage({ open, onClose }) {
@@ -25,7 +25,7 @@ export default function LeaderboardPage({ open, onClose }) {
           <div className="flex items-center justify-between p-5 border-b border-slate-700/50 shrink-0">
             <div className="flex items-center gap-2">
               <Trophy size={18} className="text-yellow-400" />
-              <h2 className="text-white font-semibold">Liderlik Tablosu</h2>
+              <h2 className="text-white font-semibold">Leaderboard</h2>
             </div>
             <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
               <X size={20} />
@@ -100,7 +100,7 @@ function TopList({ category, address }) {
       <div className="text-center py-12">
         <Trophy size={32} className="text-slate-600 mx-auto mb-3" />
         <p className="text-slate-500 text-sm">Henuz kimse modul tamamlamadi.</p>
-        <p className="text-slate-600 text-xs mt-1">Ilk siz olun!</p>
+        <p className="text-slate-600 text-xs mt-1">Be first!</p>
       </div>
     )
   }
@@ -122,7 +122,7 @@ function TopList({ category, address }) {
 
       {address && rank > 0 && rank > users.length && (
         <div className="pt-4 border-t border-slate-700/30">
-          <p className="text-slate-500 text-xs mb-2 text-center">Senin Siralama</p>
+          <p className="text-slate-500 text-xs mb-2 text-center">Your Rank</p>
           <LeaderboardRow
             rank={rank}
             address={address}
@@ -135,7 +135,7 @@ function TopList({ category, address }) {
       {address && rank === 0 && (
         <div className="pt-4 border-t border-slate-700/30 text-center">
           <p className="text-slate-500 text-xs">
-            Henuz skorun yok. Modul tamamlayip NFT mint et!
+            No score yet
           </p>
         </div>
       )}
@@ -159,7 +159,7 @@ function LeaderboardRow({ rank, address: userAddr, score, isMe, medal }) {
         <span className={`font-mono text-xs ${isMe ? 'text-purple-400' : 'text-slate-300'}`}>
           {shortAddr}
         </span>
-        {isMe && <span className="text-purple-400 text-[10px] ml-1.5">(Sen)</span>}
+        {isMe && <span className="text-purple-400 text-[10px] ml-1.5">(You)</span>}
       </div>
       <span className="font-mono text-xs font-bold text-slate-200 shrink-0">
         {score}
@@ -167,3 +167,4 @@ function LeaderboardRow({ rank, address: userAddr, score, isMe, medal }) {
     </div>
   )
 }
+

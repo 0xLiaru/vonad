@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { X, ArrowRight, ArrowLeft, Check, Wallet, Blocks, Play } from 'lucide-react'
 import { markOnboardingDone } from '../utils/onboarding.js'
@@ -21,21 +21,21 @@ export default function OnboardingModal({ open, onClose }) {
       icon: <Blocks size={32} className="text-purple-400" />,
       title: lang === 'tr' ? 'Bu platform ne?' : 'What is this platform?',
       desc: lang === 'tr'
-        ? 'Vonad, Web3 ve blockchain kavramlarını sürükle-bırak bloklarla öğrenmenizi sağlayan interaktif bir öğrenme platformudur. Her konu için blokları doğru sıralayın, simülasyonu çalıştırın ve öğrenin.'
+        ? 'Vonad, Web3 ve blockchain kavramlarını sürükle-bırak Blocksla öğrenmenizi sağlayan interaktif bir öğrenme platformudur. Her konu için Blocksı doğru sıralayın, simülasyonu çalıştırın ve öğrenin.'
         : 'Vonad is an interactive learning platform that lets you learn Web3 and blockchain concepts with drag-and-drop blocks. Arrange blocks in the correct order, run simulations, and learn.',
     },
     {
       icon: <Wallet size={32} className="text-purple-400" />,
       title: lang === 'tr' ? 'Bir konu seç' : 'Choose a topic',
       desc: lang === 'tr'
-        ? 'Sol panelden öğrenmek istediğiniz konuyu seçin. Cüzdan bağlamadan demo modunda başlayabilir, gerçek NFT kazanmak için cüzdan bağlayabilirsiniz.'
+        ? 'Sol panelden öğrenmek istediğiniz konuyu seçin. Cüzdan bağlamadan Demo Mode başlayabilir, gerçek NFT kazanmak için cüzdan bağlayabilirsiniz.'
         : 'Pick a topic you want to learn from the left panel. Start in demo mode without a wallet, or connect your wallet to earn real NFTs.',
     },
     {
       icon: <Play size={32} className="text-purple-400" />,
-      title: lang === 'tr' ? 'Blokları birleştir ve simüle et' : 'Connect blocks & simulate',
+      title: lang === 'tr' ? 'Blocksı birleştir ve simüle et' : 'Connect blocks & simulate',
       desc: lang === 'tr'
-        ? 'Blok paletinden blokları orta alana sürükleyin, doğru sıralayın, doğrulayın ve simülasyonu çalıştırın. Modülü tamamlayınca NFT kazanabilirsiniz!'
+        ? 'Blok paletinden Blocksı orta alana sürükleyin, doğru sıralayın, doğrulayın ve simülasyonu çalıştırın. Modülü tamamlayınca NFT kazanabilirsiniz!'
         : 'Drag blocks from the palette to the canvas, arrange them correctly, validate, and run the simulation. Complete the module to earn an NFT!',
     },
   ]
@@ -82,7 +82,7 @@ export default function OnboardingModal({ open, onClose }) {
                 className="flex items-center gap-1.5 text-slate-400 hover:text-white disabled:opacity-30 transition-colors text-sm"
               >
                 <ArrowLeft size={14} />
-                {lang === 'tr' ? 'Geri' : 'Back'}
+                {lang === 'tr' ? 'Back' : 'Back'}
               </button>
 
               <div className="flex gap-1.5">
@@ -136,3 +136,4 @@ export default function OnboardingModal({ open, onClose }) {
     </>
   )
 }
+

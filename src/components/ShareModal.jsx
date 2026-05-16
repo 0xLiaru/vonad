@@ -1,4 +1,4 @@
-import { Gift, X, Share2 } from 'lucide-react'
+﻿import { Gift, X, Share2 } from 'lucide-react'
 import { topics } from '../data/topics.js'
 
 export default function ShareModal({ open, onClose, data }) {
@@ -22,7 +22,7 @@ export default function ShareModal({ open, onClose, data }) {
           <div className="flex items-center justify-between p-5 border-b border-slate-700/50">
             <div className="flex items-center gap-2">
               <Gift size={18} className="text-yellow-400" />
-              <h3 className="text-white font-semibold text-sm">NFT Kazandin!</h3>
+              <h3 className="text-white font-semibold text-sm">NFT Earned!</h3>
             </div>
             <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
               <X size={18} />
@@ -45,13 +45,13 @@ export default function ShareModal({ open, onClose, data }) {
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#1d9bf0] hover:bg-[#1a8cd8] text-white text-sm font-medium transition-colors"
               >
                 <Share2 size={16} />
-                X'te Paylas
+                Share on X
               </a>
               <button
                 onClick={onClose}
                 className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-sm hover:bg-slate-700 transition-colors"
               >
-                Kapat
+                Close
               </button>
             </div>
           </div>
@@ -60,3 +60,4 @@ export default function ShareModal({ open, onClose, data }) {
     </>
   )
 }
+

@@ -45,7 +45,7 @@ export default function BlockPalette({ selectedTopic, topicSteps, currentStep, c
   return (
     <div className="w-52 border-r border-slate-700/30 bg-slate-900/20 flex flex-col shrink-0">
       <div className="h-8 border-b border-slate-700/30 flex items-center px-3 bg-slate-900/30">
-        <span className="text-slate-400 text-[11px] font-medium">Adim {currentStep + 1}</span>
+        <span className="text-slate-400 text-[11px] font-medium">Step {currentStep + 1}</span>
       </div>
       <div className="flex-1 overflow-y-auto p-3">
         <PaletteBlock block={stepBlock} />
@@ -55,7 +55,7 @@ export default function BlockPalette({ selectedTopic, topicSteps, currentStep, c
         {freeLimitReached && (
           <p className="text-yellow-400 text-[10px] mt-2 text-center flex items-center justify-center gap-1">
             <AlertTriangle size={10} />
-            Ucretsiz limit (5) doldu. Premium alin.
+            Free limit (5) doldu. Premiumin.
           </p>
         )}
       </div>
@@ -82,8 +82,8 @@ function PaletteBlock({ block }) {
     return (
       <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-green-500/10 border-2 border-green-500/40 cursor-grab active:cursor-grabbing hover:bg-green-500/20 transition-all min-w-[180px]">
         <CheckCircle size={24} className="text-green-400" />
-        <span className="text-sm text-green-400 font-medium">Cuzdan zaten bagli!</span>
-        <span className="text-[10px] text-slate-400 text-center">Surukleyin, otomatik tamamlanir</span>
+        <span className="text-sm text-green-400 font-medium">Cuzdan zaten Connected!</span>
+        <span className="text-[10px] text-slate-400 text-center">Auto-complete</span>
       </div>
     )
   }
@@ -94,7 +94,7 @@ function PaletteBlock({ block }) {
         <Lock size={24} className="text-slate-600" />
         <span className="text-xs text-center text-slate-500">{block.name?.tr || block.id}</span>
         {block.freeLimitReached && (
-          <span className="text-[10px] text-yellow-400">Ucretsiz limit doldu</span>
+          <span className="text-[10px] text-yellow-400">Free limit doldu</span>
         )}
       </div>
     )
@@ -120,6 +120,7 @@ function PaletteBlock({ block }) {
     </div>
   )
 }
+
 
 
 

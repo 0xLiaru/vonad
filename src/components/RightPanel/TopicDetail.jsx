@@ -33,7 +33,7 @@ export default function TopicDetail() {
           <div className="flex items-center gap-1.5 text-purple-400">
             <Lightbulb size={14} />
             <span className="text-xs font-medium uppercase tracking-wider">
-              {lang === 'tr' ? 'Detaylı Açıklama' : 'Detailed Description'}
+              {lang === 'tr' ? 'Detailslı Açıklama' : 'Detailed Description'}
             </span>
           </div>
           <p className="text-slate-400 text-xs leading-relaxed">{topic.longDesc[lang]}</p>
@@ -89,6 +89,7 @@ export default function TopicDetail() {
     </div>
   )
 }
+
 
 
 

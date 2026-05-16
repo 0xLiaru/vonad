@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+﻿import { useState, useCallback } from 'react'
 import { DndContext, PointerSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core'
 import { useConnect, useAccount, useBalance, useSignMessage, useSendTransaction, useWriteContract } from 'wagmi'
 import { parseEther, getAddress } from 'viem'
@@ -44,41 +44,41 @@ export default function Workspace() {
       // Different actions per block type
       if (blockId === 'wallet-connect') {
         if (isConnected) {
-          completeStep({ success: true, blockId, result: 'Cuzdan zaten bagli' })
-          setTxState({ status: 'done', step: currentStep, blockId, result: 'Cuzdan zaten bagli' })
+          completeStep({ success: true, blockId, result: 'Cuzdan zaten Connected' })
+          setTxState({ status: 'done', step: currentStep, blockId, result: 'Cuzdan zaten Connected' })
           return
         }
         const connector = connectors[0]
-        if (!connector) throw new Error('Cuzdan bulunamadi')
+        if (!connector) throw new Error('No wallet')
         await connect({ connector })
-        completeStep({ success: true, blockId, result: 'Cuzdan baglandi' })
-        setTxState({ status: 'done', step: currentStep, blockId, result: 'Cuzdan baglandi' })
+        completeStep({ success: true, blockId, result: 'Connected' })
+        setTxState({ status: 'done', step: currentStep, blockId, result: 'Connected' })
         return
       }
 
       if (blockId === 'wallet-sign') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        if (!isConnected) throw new Error('Connect wallet')
         setTxState({ status: 'confirming', step: currentStep, blockId })
-        const sig = await signMessage({ message: 'BlockLearn dogrulama' })
-        completeStep({ success: true, blockId, hash: sig, result: 'Imza atildi' })
-        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: 'Imza atildi' })
+        const sig = await signMessage({ message: 'BlockLearn Validatema' })
+        completeStep({ success: true, blockId, hash: sig, result: 'Signed' })
+        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: 'Signed' })
         return
       }
 
       if (blockId === 'wallet-balance') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
-        completeStep({ success: true, blockId, result: 'Bakiye okundu' })
-        setTxState({ status: 'done', step: currentStep, blockId, result: 'Bakiye okundu' })
+        if (!isConnected) throw new Error('Connect wallet')
+        completeStep({ success: true, blockId, result: 'Balance read' })
+        setTxState({ status: 'done', step: currentStep, blockId, result: 'Balance read' })
         return
       }
 
       if (blockId === 'wallet-transfer') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        if (!isConnected) throw new Error('Connect wallet')
         setTxState({ status: 'confirming', step: currentStep, blockId })
         sendTransaction({ to: '0x6d7E4C86eE6Db8E1FfA59F24031f68A8109ff9BF', value: parseEther('0.001') }, {
           onSuccess: (hash) => {
-            completeStep({ success: true, blockId, hash, result: 'Transfer basarili' })
-            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Transfer basarili' })
+            completeStep({ success: true, blockId, hash, result: 'Sent' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Sent' })
           },
           onError: (err) => {
             setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
@@ -88,14 +88,14 @@ export default function Workspace() {
       }
 
       if (blockId === 'wallet-disconnect') {
-        completeStep({ success: true, blockId, result: 'Baglanti kesildi' })
-        setTxState({ status: 'done', step: currentStep, blockId, result: 'Baglanti kesildi' })
+        completeStep({ success: true, blockId, result: 'Disconnected' })
+        setTxState({ status: 'done', step: currentStep, blockId, result: 'Disconnected' })
         return
       }
 
       // Token actions (USDC on Monad testnet)
       if (blockId === 'token-approve') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        if (!isConnected) throw new Error('Connect wallet')
         setTxState({ status: 'confirming', step: currentStep, blockId })
         writeContract({
           address: USDC,
@@ -104,8 +104,8 @@ export default function Workspace() {
           args: [USDC, parseEther('100')],
         }, {
           onSuccess: (hash) => {
-            completeStep({ success: true, blockId, hash, result: 'Approve basarili' })
-            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Approve basarili' })
+            completeStep({ success: true, blockId, hash, result: 'Approved' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Approved' })
           },
           onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
         })
@@ -113,14 +113,16 @@ export default function Workspace() {
       }
 
       if (blockId === 'token-allowance') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
-        completeStep({ success: true, blockId, result: 'Allowance okundu: 100 USDC' })
-        setTxState({ status: 'done', step: currentStep, blockId, result: 'Allowance: 100 USDC' })
+        if (!isConnected) throw new Error('Connect wallet')
+        setTxState({ status: 'confirming', step: currentStep, blockId })
+        const sig = await signMessage({ message: 'BlockLearn: Check Allowance' })
+        completeStep({ success: true, blockId, hash: sig, result: 'Allowance checked' })
+        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: 'Allowance checked' })
         return
       }
 
       if (blockId === 'token-transfer') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        if (!isConnected) throw new Error('Connect wallet')
         setTxState({ status: 'confirming', step: currentStep, blockId })
         writeContract({
           address: USDC,
@@ -129,8 +131,8 @@ export default function Workspace() {
           args: [ZERO_ADDR, parseEther('1')],
         }, {
           onSuccess: (hash) => {
-            completeStep({ success: true, blockId, hash, result: 'Token transfer basarili' })
-            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Token transfer basarili' })
+            completeStep({ success: true, blockId, hash, result: 'Token Sent' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Token Sent' })
           },
           onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
         })
@@ -139,7 +141,7 @@ export default function Workspace() {
 
       // NFT mint
       if (blockId === 'nft-mint') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        if (!isConnected) throw new Error('Connect wallet')
         setTxState({ status: 'confirming', step: currentStep, blockId })
         writeContract({
           address: ACHIEVEMENT_NFT_ADDRESS,
@@ -149,8 +151,8 @@ export default function Workspace() {
           value: parseEther('0.001'),
         }, {
           onSuccess: (hash) => {
-            completeStep({ success: true, blockId, hash, result: 'NFT mint edildi' })
-            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'NFT mint edildi' })
+            completeStep({ success: true, blockId, hash, result: 'Minted' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Minted' })
           },
           onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
         })
@@ -159,7 +161,7 @@ export default function Workspace() {
 
       // Staking
       if (blockId === 'staking-stake' || blockId === 'staking-unstake') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        if (!isConnected) throw new Error('Connect wallet')
         setTxState({ status: 'confirming', step: currentStep, blockId })
         writeContract({
           address: STAKING_DISCOUNT_ADDRESS, abi: STAKING_DISCOUNT_ABI,
@@ -177,7 +179,7 @@ export default function Workspace() {
 
       // Sign-based actions (imza gerektiren tum blocklar)
       if (['wallet-sign', 'nft-transfer', 'nft-royalty', 'dao-proposal', 'dao-vote', 'bridge-lock', 'bridge-unlock', 'paymaster-sign', 'sc-call', 'oracle-verify', 'x402-verify', 'mev-arbitrage'].includes(blockId)) {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        if (!isConnected) throw new Error('Connect wallet')
         setTxState({ status: 'confirming', step: currentStep, blockId })
         const sig = await signMessage({ message: `BlockLearn: ${blockId}` })
         completeStep({ success: true, blockId, hash: sig, result: 'Imzalandi' })
@@ -187,39 +189,19 @@ export default function Workspace() {
 
       // Oracle reads
       if (['defi-oracle', 'oracle-price'].includes(blockId)) {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
-        completeStep({ success: true, blockId, result: 'Oracle: MON/USD fiyati okundu' })
-        setTxState({ status: 'done', step: currentStep, blockId, result: 'Oracle fiyati okundu' })
+        if (!isConnected) throw new Error('Connect wallet')
+        completeStep({ success: true, blockId, result: 'Oracle price read' })
+        setTxState({ status: 'done', step: currentStep, blockId, result: 'Oracle price read' })
         return
       }
 
-      // Deploy contract
-      if (blockId === 'sc-deploy') {
-        if (!isConnected) throw new Error('Once cuzdan baglayin')
-        setTxState({ status: 'confirming', step: currentStep, blockId })
-        writeContract({
-          address: '0x0000000000000000000000000000000000000000',
-          abi: [{ type: 'function', name: 'hello', outputs: [{ type: 'string' }], stateMutability: 'pure' }],
-          functionName: 'hello',
-          args: [],
-        }, {
-          onError: (err) => {
-            completeStep({ success: true, blockId, result: 'Kontrat deploy simule edildi' })
-            setTxState({ status: 'done', step: currentStep, blockId, result: 'Kontrat deploy simule edildi' })
-          }
-        })
-        return
-      }
-
-      // All remaining: sign a message with block name
-      if (!isConnected) {
-        completeStep({ success: true, blockId, result: 'Tamamlandi (simulasyon)' })
-        setTxState({ status: 'done', step: currentStep, blockId, result: 'Tamamlandi (simulasyon)' })
-        return
-      }
+      // All remaining blocks: sign a real message (triggers wallet popup)
+      if (!isConnected) throw new Error('Connect wallet')
+      setTxState({ status: 'confirming', step: currentStep, blockId })
       const stepLabel = topicSteps[currentStep]?.label?.tr || blockId
-      completeStep({ success: true, blockId, result: `${stepLabel} tamamlandi` })
-      setTxState({ status: 'done', step: currentStep, blockId, result: `${stepLabel} tamamlandi` })
+      const sig = await signMessage({ message: `BlockLearn: ${stepLabel}` })
+      completeStep({ success: true, blockId, hash: sig, result: `${stepLabel} Done` })
+      setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: `${stepLabel} Done` })
     } catch (err) {
       setTxState({ status: 'error', step: currentStep, blockId, error: err?.message || 'Islem reddedildi' })
     }
@@ -254,7 +236,7 @@ export default function Workspace() {
 
         {wrongDrop && (
           <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-red-500/90 text-white text-xs px-4 py-2 rounded-lg z-50">
-            Yanlis slot! Dogru adima surukleyin.
+            Yanlis slot! Dogru Stepa surukleyin.
           </div>
         )}
 
@@ -281,7 +263,7 @@ export default function Workspace() {
         {txState?.status === 'error' && (
           <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-red-500/90 text-white text-xs px-4 py-2 rounded-lg z-50 flex items-center gap-2">
             <XCircle size={14} />
-            {txState.error || 'Islem reddedildi, tekrar dene'}
+            {txState.error || 'Rejected'}
           </div>
         )}
       </DndContext>
@@ -289,13 +271,13 @@ export default function Workspace() {
       {selectedTopic && (
         <div className="h-10 border-t border-slate-700/30 flex items-center justify-between px-4 bg-slate-900/30 shrink-0">
           <span className="text-white font-semibold text-xs">
-            {completedSteps.length} / {topicSteps.length} tamamlandi
+            {completedSteps.length} / {topicSteps.length} Done
           </span>
           <div className="flex items-center gap-2">
             {allDone && !moduleCompleted && (
               <button onClick={completeModule}
                 className="text-xs px-4 py-1.5 rounded-md bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium hover:from-purple-600 hover:to-blue-600 transition-all">
-                Modulu Tamamla
+                Complete Module
               </button>
             )}
           </div>
@@ -304,3 +286,4 @@ export default function Workspace() {
     </main>
   )
 }
+

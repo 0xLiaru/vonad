@@ -15,8 +15,8 @@ export default function Canvas({ activeId, overId }) {
           <div className="w-14 h-14 mx-auto mb-4 rounded-2xl border-2 border-dashed border-slate-700 flex items-center justify-center bg-slate-900/30">
             <Blocks size={22} className="text-slate-600" />
           </div>
-          <p className="text-slate-400 text-sm font-medium mb-1">Calisma Alani</p>
-          <p className="text-slate-600 text-xs">Bloklari surukleyip dogru slotlara yerlestirin</p>
+          <p className="text-slate-400 text-sm font-medium mb-1">Workspace</p>
+          <p className="text-slate-600 text-xs">Blocksi surukleyip dogru slotlara yerlestirin</p>
         </div>
       </div>
     )
@@ -27,7 +27,7 @@ export default function Canvas({ activeId, overId }) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       <div className="p-3 border-b border-slate-700/30 shrink-0">
-        <p className="text-white font-semibold text-sm">Calisma Alani</p>
+        <p className="text-white font-semibold text-sm">Workspace</p>
       </div>
       <div className="flex-1 flex min-h-0">
         <BlockPalette selectedTopic={selectedTopic} topicSteps={topicSteps} currentStep={currentStep} completedSteps={completedSteps} />
@@ -135,6 +135,7 @@ function StepSlot({ index, step, isCompleted, isActive, isLocked, result, colors
     </div>
   )
 }
+
 
 
 

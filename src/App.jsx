@@ -52,10 +52,10 @@ function AppContent() {
       <Header />
       {wrongChain && (
         <div className="shrink-0 bg-red-500/10 border-b border-red-500/20 px-4 py-2 flex items-center justify-between">
-          <span className="text-red-400 text-xs">Yanlis ag. Monad Testnete gecin.</span>
+          <span className="text-red-400 text-xs">Wrong network.</span>
           <button onClick={handleSwitchChain}
             className="text-xs px-3 py-1 rounded-md bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors">
-            Agi Degistir
+            Switch
           </button>
         </div>
       )}
@@ -88,4 +88,5 @@ function App() {
 }
 
 export default App
+
 

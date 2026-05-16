@@ -22,7 +22,7 @@ export default function AccountPage({ open, onClose }) {
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl h-[90vh] shadow-2xl flex flex-col">
           <div className="flex items-center justify-between p-5 border-b border-slate-700/50 shrink-0">
-            <h2 className="text-white font-semibold text-lg">Hesabim</h2>
+            <h2 className="text-white font-semibold text-lg">Account</h2>
             <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
               <X size={20} />
             </button>
@@ -50,7 +50,7 @@ function AccountTabs() {
     <>
       <div className="flex border-b border-slate-700/50 shrink-0">
         <TabButton active={tab === 'account'} onClick={() => setTab('account')}>
-          Hesabim
+          Account
         </TabButton>
         {isOwner && (
           <TabButton active={tab === 'admin'} onClick={() => setTab('admin')}>
@@ -83,7 +83,7 @@ function TabButton({ active, onClick, children }) {
 function AccountContent() {
   const { address } = useAccount()
   if (!address) {
-    return <EmptyState text="Cuzdan baglayarak hesap sayfanizi goruntuleyin." />
+    return <EmptyState text="Connect wallet to continue" />
   }
   return (
     <>
@@ -115,7 +115,7 @@ function PremiumSection({ address }) {
   return (
     <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-slate-200 text-sm font-semibold">Premium Durumu</h3>
+        <h3 className="text-slate-200 text-sm font-semibold">Status</h3>
         <span className="font-mono text-xs text-slate-500">
           {address.slice(0, 6)}...{address.slice(-4)}
         </span>
@@ -127,10 +127,10 @@ function PremiumSection({ address }) {
               <Crown size={20} className="text-purple-400" />
             </div>
             <div>
-              <p className="text-purple-400 text-sm font-medium">Premium Aktif</p>
+              <p className="text-purple-400 text-sm font-medium">Active</p>
               <div className="flex items-center gap-1.5 text-slate-500 text-xs mt-0.5">
                 <Clock size={12} />
-                <span>Bitis: {expiryDate?.toLocaleDateString('tr-TR')}</span>
+                <span>Expires: {expiryDate?.toLocaleDateString('tr-TR')}</span>
               </div>
             </div>
           </>
@@ -139,7 +139,7 @@ function PremiumSection({ address }) {
             <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center">
               <Crown size={20} className="text-slate-500" />
             </div>
-            <p className="text-slate-400 text-sm">Premium uyelik aktif degil</p>
+            <p className="text-slate-400 text-sm">Active degil</p>
           </>
         )}
       </div>
@@ -162,7 +162,7 @@ function NftGrid({ address }) {
         <h3 className="text-slate-200 text-sm font-semibold">NFT'ler ({tokens.length})</h3>
       </div>
       {tokens.length === 0 ? (
-        <p className="text-slate-500 text-sm">Henuz NFT yok.</p>
+        <p className="text-slate-500 text-sm">No NFTs yet</p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {tokens.map((tokenId) => (
@@ -249,7 +249,7 @@ function StakingPanel({ address }) {
 
       {isApproved && unstakedTokens.length > 0 && (
         <div className="space-y-2">
-          <p className="text-slate-500 text-xs">Stake edilebilir:</p>
+          <p className="text-slate-500 text-xs">Available:</p>
           <div className="flex flex-wrap gap-2">
             {unstakedTokens.map((id) => (
               <TxActionButton key={id.toString()} tokenId={id} label={`Stake #${id}`} color="green"
@@ -261,7 +261,7 @@ function StakingPanel({ address }) {
 
       {stakedIds && stakedIds.length > 0 && (
         <div className={unstakedTokens.length > 0 ? 'mt-4 space-y-2' : 'space-y-2'}>
-          <p className="text-slate-500 text-xs">Stake edilmis:</p>
+          <p className="text-slate-500 text-xs">Staked:</p>
           <div className="flex flex-wrap gap-2">
             {stakedIds.map((id) => (
               <TxActionButton key={id.toString()} tokenId={id} label={`Unstake #${id}`} color="red"
@@ -292,7 +292,7 @@ function TxApproveButton() {
       disabled={isPending}
       className="text-xs px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 flex items-center gap-1.5 disabled:opacity-50">
       {isPending && <Loader2 size={12} className="animate-spin" />}
-      Staking icin Onayla
+      Approve
     </button>
   )
 }
@@ -339,12 +339,12 @@ function ProgressSection({ address }) {
       <div className="flex items-center gap-2 mb-4">
         <TrendingUp size={16} className="text-green-400" />
         <h3 className="text-slate-200 text-sm font-semibold">
-          Ilerleme ({completions.length} modul tamamlandi)
+          Progress ({completions.length} modul Done)
         </h3>
       </div>
 
       {completions.length === 0 ? (
-        <p className="text-slate-500 text-sm">Henuz modul tamamlanmadi.</p>
+        <p className="text-slate-500 text-sm">No progress</p>
       ) : (
         <div className="space-y-3">
           {Object.entries(topicCounts).map(([topicKey, completed]) => {
@@ -374,7 +374,7 @@ function ProgressSection({ address }) {
       <div className="mt-4 pt-4 border-t border-slate-700/30">
         <div className="flex items-center gap-1.5 text-yellow-400 text-xs mb-2">
           <Circle size={10} className="fill-yellow-400" />
-          <span>Onerilen Siradaki Konu</span>
+          <span>Next Topic</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {['Wallet', 'Token', 'DeFi', 'SmartContract'].map((key) => {
@@ -465,7 +465,7 @@ function AdminPanel() {
       </div>
 
       <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
-        <h4 className="text-slate-200 text-sm font-semibold mb-3">En Cok Modul Tamamlayan</h4>
+        <h4 className="text-slate-200 text-sm font-semibold mb-3">Modules Tamamlayan</h4>
         {topAddresses.length === 0 ? (
           <p className="text-slate-500 text-xs">Henuz veri yok.</p>
         ) : (
@@ -491,6 +491,7 @@ function AdminCard({ icon, label, value }) {
     </div>
   )
 }
+
 
 
 

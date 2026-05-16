@@ -29,10 +29,10 @@ function HeroSection({ lang, isConnected, selectTopic }) {
       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-medium">
         <Zap size={12} /> Monad Testnet
       </div>
-      <h1 className="text-3xl font-bold text-white">{lang === 'tr' ? "Web3'u Bloklarla Ogren" : 'Learn Web3 with Blocks'}</h1>
+      <h1 className="text-3xl font-bold text-white">{lang === 'tr' ? "Web3'u Blocksla Ogren" : 'Learn Web3 with Blocks'}</h1>
       <p className="text-slate-200 max-w-lg mx-auto text-sm leading-relaxed">
         {lang === 'tr'
-          ? 'Blockchain kavramlarini surukle-birak bloklarla ogrenin, simulasyonlarla pratik yapin.'
+          ? 'Blockchain kavramlarini surukle-birak Blocksla ogrenin, simulasyonlarla pratik yapin.'
           : 'Learn blockchain concepts with drag-and-drop blocks and practice with simulations.'}
       </p>
       <button onClick={() => selectTopic('Wallet')}
@@ -45,23 +45,23 @@ function HeroSection({ lang, isConnected, selectTopic }) {
 
 function ComparisonSection({ lang }) {
   const features = [
-    { label: lang === 'tr' ? 'Temel konular' : 'Basic topics', free: true, premium: true },
-    { label: lang === 'tr' ? 'Ileri konular' : 'Advanced topics', free: false, premium: true },
+    { label: lang === 'tr' ? 'Temel Topics' : 'Basic topics', free: true, premium: true },
+    { label: lang === 'tr' ? 'Ileri Topics' : 'Advanced topics', free: false, premium: true },
     { label: lang === 'tr' ? 'Simulasyonlar' : 'Simulations', free: true, premium: true },
     { label: lang === 'tr' ? 'NFT rozetleri' : 'NFT badges', free: false, premium: true },
     { label: lang === 'tr' ? 'Gas sponsorlugu' : 'Gas sponsorship', free: false, premium: true },
-    { label: lang === 'tr' ? 'Stake indirimi' : 'Staking discount', free: false, premium: true },
+    { label: lang === 'tr' ? 'Staking discount' : 'Staking discount', free: false, premium: true },
   ]
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-white text-center mb-4">{lang === 'tr' ? 'Ucretsiz vs Premium' : 'Free vs Premium'}</h2>
+      <h2 className="text-lg font-bold text-white text-center mb-4">{lang === 'tr' ? 'Free vs Premium' : 'Free vs Premium'}</h2>
       <div className="overflow-x-auto">
         <table className="w-full max-w-xl mx-auto text-sm">
           <thead>
             <tr className="border-b border-slate-700/50">
               <th className="text-left py-2 text-slate-400 font-medium text-xs">{lang === 'tr' ? 'Ozellik' : 'Feature'}</th>
-              <th className="text-center py-2 text-green-400 font-medium text-xs w-20">{lang === 'tr' ? 'Ucretsiz' : 'Free'}</th>
+              <th className="text-center py-2 text-green-400 font-medium text-xs w-20">{lang === 'tr' ? 'Free' : 'Free'}</th>
               <th className="text-center py-2 text-purple-400 font-medium text-xs w-20"><Crown size={11} className="inline mr-1" />Premium</th>
             </tr>
           </thead>
@@ -86,10 +86,10 @@ function TopicsSection({ lang, selectTopic }) {
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-white text-center mb-4">{lang === 'tr' ? 'Tum Konular' : 'All Topics'}</h2>
+      <h2 className="text-lg font-bold text-white text-center mb-4">{lang === 'tr' ? 'Tum Topics' : 'All Topics'}</h2>
       <div className="space-y-5">
         <div>
-          <h3 className="text-green-300 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5"><Shield size={12} />{lang === 'tr' ? 'Ucretsiz' : 'Free'}</h3>
+          <h3 className="text-green-300 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5"><Shield size={12} />{lang === 'tr' ? 'Free' : 'Free'}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {freeTopics.map((key) => <TopicCard key={key} topicKey={key} lang={lang} selectTopic={selectTopic} isFree />)}
           </div>
@@ -131,6 +131,7 @@ function TopicCard({ topicKey, lang, selectTopic, isFree = false }) {
     </button>
   )
 }
+
 
 
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { formatEther, parseEther } from 'viem'
 import { X, Crown, ShieldCheck, Loader2 } from 'lucide-react'
@@ -75,7 +75,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
           <div className="flex items-center justify-between p-5 border-b border-slate-700/50">
             <div className="flex items-center gap-2">
               <Crown size={18} className="text-yellow-400" />
-              <h3 className="text-white font-semibold">Premium Uyelik</h3>
+              <h3 className="text-white font-semibold">Premium</h3>
             </div>
             <button onClick={onClose} className="text-slate-500 hover:text-white">
               <X size={18} />
@@ -87,19 +87,19 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
               <>
                 <div className="bg-slate-800 rounded-xl p-4 space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Aylik standart fiyat</span>
+                    <span className="text-slate-400">Monthly price</span>
                     <span className="text-slate-200 font-mono">
                       {fullPrice.toFixed(6)} MON
                     </span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-slate-500">Sabit fiyat</span>
+                    <span className="text-slate-500">Fixed price</span>
                     <span className="text-slate-500">30 gun</span>
                   </div>
                   {count > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-green-400">
-                        Stake indirimi ({count} NFT - %{discountPct})
+                        Staking discount ({count} NFT - %{discountPct})
                       </span>
                       <span className="text-green-400 font-mono">
                         -{(fullPrice - discountedPrice).toFixed(6)} MON
@@ -113,13 +113,13 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                     </span>
                   </div>
                   <div className="text-yellow-400/70 text-[10px]">
-                    Odeme Escrow kontratinda 30 gun kilitli kalir.
+                    30 day escrow lock
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <p className="text-slate-400 text-xs font-medium">
-                    Premium ile acilacak konular:
+                    Premium ile acilacak Topics:
                   </p>
                   <div className="grid grid-cols-2 gap-1.5">
                     {premiumTopics.slice(0, 10).map((key) => (
@@ -144,7 +144,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                   disabled={!address}
                   className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium text-sm hover:from-purple-600 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {address ? 'Onayla ve Ode (Escrow)' : 'Once cuzdan baglayin'}
+                  {address ? 'Confirm & Pay' : 'Connect wallet'}
                 </button>
               </>
             )}
@@ -152,7 +152,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
             {step === 'pending' && (
               <div className="text-center py-6 space-y-3">
                 <Loader2 size={32} className="animate-spin text-purple-400 mx-auto" />
-                <p className="text-slate-300 text-sm">Islem onaylaniyor...</p>
+                <p className="text-slate-300 text-sm">Pending...</p>
                 <p className="text-slate-500 text-xs">Cuzdaninda islemi onayla</p>
                 {txHash && (
                   <p className="text-slate-600 text-xs font-mono truncate">
@@ -167,9 +167,9 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                 <div className="w-14 h-14 mx-auto rounded-full bg-green-500/10 flex items-center justify-center">
                   <ShieldCheck size={28} className="text-green-400" />
                 </div>
-                <p className="text-green-400 font-medium">Premium Aktif!</p>
+                <p className="text-green-400 font-medium">Active!</p>
                 <p className="text-slate-400 text-sm">
-                  30 gun boyunca tum konulara ve bloklara erisebilirsin.
+                  30 gun boyunca tum Topicsa ve Blocksa erisebilirsin.
                 </p>
                 <p className="text-slate-500 text-xs">
                   Odemen 30 gun escrow'da kilitli, bu sure icinde iade talep edebilirsin.
@@ -178,7 +178,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                   onClick={onClose}
                   className="px-6 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm hover:bg-slate-700 transition-colors"
                 >
-                  Kapat
+                  Close
                 </button>
               </div>
             )}
@@ -188,3 +188,4 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
     </>
   )
 }
+
