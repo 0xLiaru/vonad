@@ -5,8 +5,8 @@ import { parseEther } from 'viem'
 import { useApp } from '../context/AppContext.jsx'
 import { topics } from '../data/topics.js'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
-import { ACHIEVEMENT_NFT_ABI, LEADERBOARD_ABI, USER_PROGRESS_ABI } from '../contracts/abis.js'
-import { ACHIEVEMENT_NFT_ADDRESS, LEADERBOARD_ADDRESS, USER_PROGRESS_ADDRESS } from '../contracts/addresses.js'
+import { ACHIEVEMENT_NFT_ABI, LEADERBOARD_ABI, USER_PROGRESS_ABI, STAKING_DISCOUNT_ABI } from '../contracts/abis.js'
+import { ACHIEVEMENT_NFT_ADDRESS, LEADERBOARD_ADDRESS, USER_PROGRESS_ADDRESS, STAKING_DISCOUNT_ADDRESS } from '../contracts/addresses.js'
 import Canvas from './Workspace/Canvas'
 
 export default function Workspace() {
@@ -173,14 +173,65 @@ export default function Workspace() {
       }
 
       // Staking
-      if (blockId === 'staking-stake') {
+      if (blockId === 'staking-stake' || blockId === 'staking-unstake') {
         if (!isConnected) throw new Error('Once cuzdan baglayin')
-        completeStep({ success: true, blockId, result: 'NFT stake edildi (simulasyon)' })
-        setTxState({ status: 'done', step: currentStep, blockId, result: 'NFT stake edildi' })
+        setTxState({ status: 'confirming', step: currentStep, blockId })
+        writeContract({
+          address: STAKING_DISCOUNT_ADDRESS, abi: STAKING_DISCOUNT_ABI,
+          functionName: blockId === 'staking-stake' ? 'stake' : 'unstake',
+          args: [1n],
+        }, {
+          onSuccess: (hash) => {
+            completeStep({ success: true, blockId, hash, result: 'Stake islemi basarili' })
+            setTxState({ status: 'done', step: currentStep, blockId, hash, result: 'Stake islemi basarili' })
+          },
+          onError: (err) => setTxState({ status: 'error', step: currentStep, blockId, error: err?.message })
+        })
         return
       }
 
-      // Generic: log the step as complete
+      // Sign-based actions (imza gerektiren tum blocklar)
+      if (['wallet-sign', 'nft-transfer', 'nft-royalty', 'dao-proposal', 'dao-vote', 'bridge-lock', 'bridge-unlock', 'paymaster-sign', 'sc-call', 'oracle-verify', 'x402-verify', 'mev-arbitrage'].includes(blockId)) {
+        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        setTxState({ status: 'confirming', step: currentStep, blockId })
+        const sig = await signMessage({ message: `BlockLearn: ${blockId}` })
+        completeStep({ success: true, blockId, hash: sig, result: 'Imzalandi' })
+        setTxState({ status: 'done', step: currentStep, blockId, hash: sig, result: 'Imzalandi' })
+        return
+      }
+
+      // Oracle reads
+      if (['defi-oracle', 'oracle-price'].includes(blockId)) {
+        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        completeStep({ success: true, blockId, result: 'Oracle: MON/USD fiyati okundu' })
+        setTxState({ status: 'done', step: currentStep, blockId, result: 'Oracle fiyati okundu' })
+        return
+      }
+
+      // Deploy contract
+      if (blockId === 'sc-deploy') {
+        if (!isConnected) throw new Error('Once cuzdan baglayin')
+        setTxState({ status: 'confirming', step: currentStep, blockId })
+        writeContract({
+          address: '0x0000000000000000000000000000000000000000',
+          abi: [{ type: 'function', name: 'hello', outputs: [{ type: 'string' }], stateMutability: 'pure' }],
+          functionName: 'hello',
+          args: [],
+        }, {
+          onError: (err) => {
+            completeStep({ success: true, blockId, result: 'Kontrat deploy simule edildi' })
+            setTxState({ status: 'done', step: currentStep, blockId, result: 'Kontrat deploy simule edildi' })
+          }
+        })
+        return
+      }
+
+      // All remaining: sign a message with block name
+      if (!isConnected) {
+        completeStep({ success: true, blockId, result: 'Tamamlandi (simulasyon)' })
+        setTxState({ status: 'done', step: currentStep, blockId, result: 'Tamamlandi (simulasyon)' })
+        return
+      }
       const stepLabel = topicSteps[currentStep]?.label?.tr || blockId
       completeStep({ success: true, blockId, result: `${stepLabel} tamamlandi` })
       setTxState({ status: 'done', step: currentStep, blockId, result: `${stepLabel} tamamlandi` })
