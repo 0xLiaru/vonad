@@ -2,7 +2,7 @@ import { useDroppable } from '@dnd-kit/core'
 import { useApp } from '../../context/AppContext.jsx'
 import { getBlockIcon, getTopicColor } from '../../data/topicIcons.js'
 import BlockPalette from './BlockPalette'
-import { Check, Lock, ArrowDown, Blocks } from 'lucide-react'
+import { Check, Lock, Blocks } from 'lucide-react'
 
 export default function Canvas({ activeId, overId }) {
   const { selectedTopic, topicSteps, currentStep, completedSteps, stepResults } = useApp()

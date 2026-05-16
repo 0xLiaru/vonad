@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { DndContext, PointerSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core'
-import { useConnect, useAccount, useBalance, useSignMessage, useSendTransaction, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useConnect, useAccount, useBalance, useSignMessage, useSendTransaction, useWriteContract } from 'wagmi'
 import { parseEther } from 'viem'
 import { useApp } from '../context/AppContext.jsx'
 import { topics } from '../data/topics.js'
