@@ -29,7 +29,7 @@ export default function Canvas({ activeId, overId }) {
         <p className="text-white font-semibold text-sm">Calisma Alani</p>
       </div>
       <div className="flex-1 flex min-h-0">
-        <BlockPalette />
+        <BlockPalette selectedTopic={selectedTopic} topicSteps={topicSteps} currentStep={currentStep} completedSteps={completedSteps} />
         <div className="flex-1 flex flex-col items-center justify-center p-4 overflow-y-auto">
           <div className="w-full max-w-lg space-y-2">
             {topicSteps.map((step, index) => {

@@ -1,16 +1,14 @@
 import { useDraggable } from '@dnd-kit/core'
 import { useAccount, useReadContract } from 'wagmi'
 import { Lock, AlertTriangle, CheckCircle } from 'lucide-react'
-import { useApp } from '../../context/AppContext.jsx'
 import { getBlockIcon } from '../../data/topicIcons.js'
 import { PREMIUM_SUBSCRIPTION_ABI, USER_PROGRESS_ABI } from '../../contracts/abis.js'
 import { PREMIUM_SUBSCRIPTION_ADDRESS, USER_PROGRESS_ADDRESS } from '../../contracts/addresses.js'
 
-export default function BlockPalette() {
-  const { selectedTopic, topicSteps, currentStep, completedSteps } = useApp()
+export default function BlockPalette({ selectedTopic, topicSteps, currentStep, completedSteps }) {
   const { address, isConnected } = useAccount()
 
-  const { data: isPremium, refetch: refetchPremium } = useReadContract({
+  const { data: isPremium } = useReadContract({
     address: PREMIUM_SUBSCRIPTION_ADDRESS,
     abi: PREMIUM_SUBSCRIPTION_ABI,
     functionName: 'isPremium',
@@ -49,7 +47,7 @@ export default function BlockPalette() {
         <span className="text-slate-400 text-[11px] font-medium">Adim {currentStep + 1}</span>
       </div>
       <div className="flex-1 overflow-y-auto p-3">
-        <PaletteBlock block={stepBlock} isPremium={isPremium} />
+        <PaletteBlock block={stepBlock} />
         {activeStep.premium && !isPremium && (
           <p className="text-yellow-400 text-[10px] mt-2 text-center">Premium gerekiyor</p>
         )}
@@ -64,7 +62,7 @@ export default function BlockPalette() {
   )
 }
 
-function PaletteBlock({ block, isPremium }) {
+function PaletteBlock({ block }) {
   const isLocked = block.locked
   const isAlreadyDone = block.alreadyDone
   const Icon = getBlockIcon(block.id)
