@@ -222,3 +222,23 @@ export const difficultyColors = {
   intermediate: 'text-yellow-400 bg-yellow-400/10',
   advanced: 'text-red-400 bg-red-400/10',
 }
+
+export const topicColors = {
+  Wallet: { border: 'border-blue-500', bg: 'bg-blue-500/10', text: 'text-blue-400', glow: 'shadow-blue-500/10' },
+  Token: { border: 'border-green-500', bg: 'bg-green-500/10', text: 'text-green-400', glow: 'shadow-green-500/10' },
+  DeFi: { border: 'border-purple-500', bg: 'bg-purple-500/10', text: 'text-purple-400', glow: 'shadow-purple-500/10' },
+  NFT: { border: 'border-pink-500', bg: 'bg-pink-500/10', text: 'text-pink-400', glow: 'shadow-pink-500/10' },
+  Staking: { border: 'border-emerald-500', bg: 'bg-emerald-500/10', text: 'text-emerald-400', glow: 'shadow-emerald-500/10' },
+  DAO: { border: 'border-amber-500', bg: 'bg-amber-500/10', text: 'text-amber-400', glow: 'shadow-amber-500/10' },
+  Bridge: { border: 'border-cyan-500', bg: 'bg-cyan-500/10', text: 'text-cyan-400', glow: 'shadow-cyan-500/10' },
+  Gas: { border: 'border-orange-500', bg: 'bg-orange-500/10', text: 'text-orange-400', glow: 'shadow-orange-500/10' },
+  SmartContract: { border: 'border-indigo-500', bg: 'bg-indigo-500/10', text: 'text-indigo-400', glow: 'shadow-indigo-500/10' },
+  Layer2: { border: 'border-violet-500', bg: 'bg-violet-500/10', text: 'text-violet-400', glow: 'shadow-violet-500/10' },
+  Oracles: { border: 'border-rose-500', bg: 'bg-rose-500/10', text: 'text-rose-400', glow: 'shadow-rose-500/10' },
+  MEV: { border: 'border-red-500', bg: 'bg-red-500/10', text: 'text-red-400', glow: 'shadow-red-500/10' },
+  X402: { border: 'border-teal-500', bg: 'bg-teal-500/10', text: 'text-teal-400', glow: 'shadow-teal-500/10' },
+  Paymaster: { border: 'border-sky-500', bg: 'bg-sky-500/10', text: 'text-sky-400', glow: 'shadow-sky-500/10' },
+  Consensus: { border: 'border-slate-500', bg: 'bg-slate-500/10', text: 'text-slate-400', glow: 'shadow-slate-500/10' },
+}
+
+export function getTopicColor(k) { return topicColors[k] || topicColors.Consensus }

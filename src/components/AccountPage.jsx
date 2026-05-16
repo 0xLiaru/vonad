@@ -11,7 +11,6 @@ import {
   GAS_SPONSOR_PAYMASTER_ADDRESS, LEADERBOARD_ADDRESS, ESCROW_ADDRESS, USER_PROGRESS_ADDRESS
 } from '../contracts/addresses.js'
 import { topics, allTopicKeys } from '../data/topics.js'
-import { getTopicIcon } from '../data/topicIcons.js'
 
 export default function AccountPage({ open, onClose }) {
   if (!open) return null
@@ -491,4 +490,6 @@ function AdminCard({ icon, label, value }) {
     </div>
   )
 }
+
+
 

@@ -1,6 +1,5 @@
-import { useDroppable } from '@dnd-kit/core'
+﻿import { useDroppable } from '@dnd-kit/core'
 import { useApp } from '../../context/AppContext.jsx'
-import { getBlockIcon, getTopicColor } from '../../data/topicIcons.js'
 import BlockPalette from './BlockPalette'
 import { Check, Lock, Blocks } from 'lucide-react'
 
@@ -134,3 +133,5 @@ function StepSlot({ index, step, isCompleted, isActive, isLocked, result, colors
     </div>
   )
 }
+
+

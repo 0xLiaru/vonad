@@ -1,7 +1,6 @@
-import { useDraggable } from '@dnd-kit/core'
+﻿import { useDraggable } from '@dnd-kit/core'
 import { useAccount, useReadContract } from 'wagmi'
 import { Lock, AlertTriangle, CheckCircle } from 'lucide-react'
-import { getBlockIcon } from '../../data/topicIcons.js'
 import { PREMIUM_SUBSCRIPTION_ABI, USER_PROGRESS_ABI } from '../../contracts/abis.js'
 import { PREMIUM_SUBSCRIPTION_ADDRESS, USER_PROGRESS_ADDRESS } from '../../contracts/addresses.js'
 
@@ -119,3 +118,5 @@ function PaletteBlock({ block }) {
     </div>
   )
 }
+
+

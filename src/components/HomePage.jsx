@@ -1,8 +1,7 @@
-import { useTranslation } from 'react-i18next'
+﻿import { useTranslation } from 'react-i18next'
 import { useAccount } from 'wagmi'
 import { useApp } from '../context/AppContext.jsx'
 import { topics, allTopicKeys, difficultyLabels, difficultyColors } from '../data/topics.js'
-import { getTopicIcon } from '../data/topicIcons.js'
 import { ArrowRight, Crown, Check, Lock, Zap, Shield } from 'lucide-react'
 
 export default function HomePage() {
@@ -130,3 +129,5 @@ function TopicCard({ topicKey, lang, selectTopic, isFree = false }) {
     </button>
   )
 }
+
+

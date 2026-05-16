@@ -4,7 +4,6 @@ import { useAccount, useReadContract } from 'wagmi'
 import { Search, ArrowLeft, Lock, Unlock } from 'lucide-react'
 import { topics, allTopicKeys, difficultyLabels, difficultyColors } from '../data/topics.js'
 import { useApp } from '../context/AppContext.jsx'
-import { getTopicIcon, getBlockIcon } from '../data/topicIcons.js'
 import { PREMIUM_SUBSCRIPTION_ABI } from '../contracts/abis.js'
 import { PREMIUM_SUBSCRIPTION_ADDRESS } from '../contracts/addresses.js'
 
@@ -139,3 +138,5 @@ export default function LeftPanel() {
     </aside>
   )
 }
+
+
