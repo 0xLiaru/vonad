@@ -111,7 +111,7 @@ export default function LeftPanel() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <Icon size={20} className={free ? 'text-green-400' : 'text-purple-400'} />
+                <span className={free ? 'text-green-400 text-lg' : 'text-purple-400 text-lg'}>{key === 'Wallet' ? 'W' : key === 'Token' ? 'T' : key === 'DeFi' ? 'D' : key === 'NFT' ? 'N' : key[0]}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-slate-200 text-sm font-medium">{topic.name[lang]}</span>
