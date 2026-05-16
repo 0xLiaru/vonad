@@ -11,20 +11,6 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
   const [step, setStep] = useState('confirm')
   const [txHash, setTxHash] = useState(null)
 
-  const { data: priceInMon } = useReadContract({
-    address: PREMIUM_SUBSCRIPTION_ADDRESS,
-    abi: PREMIUM_SUBSCRIPTION_ABI,
-    functionName: 'getCurrentPriceInMON',
-    query: { enabled: open },
-  })
-
-  const { data: priceInUsd } = useReadContract({
-    address: PREMIUM_SUBSCRIPTION_ADDRESS,
-    abi: PREMIUM_SUBSCRIPTION_ABI,
-    functionName: 'getCurrentPriceUSD',
-    query: { enabled: open },
-  })
-
   const { data: stakedCount } = useReadContract({
     address: STAKING_DISCOUNT_ADDRESS,
     abi: STAKING_DISCOUNT_ABI,
@@ -61,8 +47,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
 
   if (!open) return null
 
-  const fullPrice = priceInMon ? Number(formatEther(priceInMon)) : 0.01
-  const usdPrice = priceInUsd ? Number(priceInUsd) / 1e8 : 5
+  const fullPrice = 350
   const count = stakedCount ? Number(stakedCount) : 0
   const discountPct = discount ? Number(discount) : 0
   const discountedPrice = fullPrice * (1 - discountPct / 100)
@@ -78,7 +63,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
       address: ESCROW_ADDRESS,
       abi: ESCROW_ABI,
       functionName: 'depositForPremium',
-      value: priceInMon || parseEther('0.01'),
+      value: parseEther(discountedPrice.toFixed(18)),
     })
   }
 
@@ -108,7 +93,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                     </span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-slate-500">(~${usdPrice.toFixed(2)} USD karsiligi)</span>
+                    <span className="text-slate-500">Sabit fiyat</span>
                     <span className="text-slate-500">30 gun</span>
                   </div>
                   {count > 0 && (
