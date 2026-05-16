@@ -119,7 +119,7 @@ function XCircle() {
 
 function TopicsSection({ lang, selectTopic }) {
   const freeTopics = ['Wallet', 'Token']
-  const premiumTopics = allTopicKeys.filter((k) => !freeTopics.includes(k))
+  const premiumTopics = (allTopicKeys || []).filter((k) => !freeTopics.includes(k))
 
   return (
     <div className="space-y-6">

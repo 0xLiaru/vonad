@@ -69,7 +69,7 @@ export default function TopicDetail() {
             </span>
           </div>
           <div className="space-y-1">
-            {topic.modules[lang].map((mod, i) => (
+            {(topic.modules?.[lang] || []).map((mod, i) => (
               <div
                 key={i}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-800/30 text-slate-400 text-xs"

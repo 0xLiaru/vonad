@@ -23,9 +23,9 @@ export default function LeftPanel() {
   })
 
   const filteredTopics = useMemo(() => {
-    if (!search.trim()) return allTopicKeys
+    if (!search.trim()) return allTopicKeys || []
     const q = search.toLowerCase()
-    return allTopicKeys.filter((key) => {
+    return (allTopicKeys || []).filter((key) => {
       const topic = topics[key]
       return (
         topic.name.tr.toLowerCase().includes(q) ||
@@ -69,7 +69,7 @@ export default function LeftPanel() {
               {lang === 'tr' ? 'Bloklar' : 'Blocks'}
             </p>
             <div className="space-y-1.5">
-              {topic.blocks.map((block) => (
+              {(topic.blocks || []).map((block) => (
                 <div
                   key={block.id}
                   className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs ${

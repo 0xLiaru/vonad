@@ -67,7 +67,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
   const discountPct = discount ? Number(discount) : 0
   const discountedPrice = fullPrice * (1 - discountPct / 100)
 
-  const premiumTopics = allTopicKeys.filter((k) => {
+  const premiumTopics = (allTopicKeys || []).filter((k) => {
     const t = topics[k]
     return t.difficulty !== 'beginner' || t.blocks.some((b) => b.locked)
   })
