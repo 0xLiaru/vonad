@@ -56,8 +56,8 @@ export default function OnboardingModal({ open, onClose }) {
         <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl">
           <div className="flex items-center justify-between p-5 border-b border-slate-700/50">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                <span className="text-white font-bold text-xs">V</span>
+              <div className="w-8 h-8 rounded-lg overflow-hidden bg-gradient-to-br from-purple-500 to-blue-500">
+                <img src="/logo.svg" alt="Vonad" className="w-full h-full" />
               </div>
               <span className="text-slate-400 text-xs">{step + 1} / {steps.length}</span>
             </div>
