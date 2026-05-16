@@ -4,18 +4,30 @@ import { useAccount, useBalance, useReadContract, useWriteContract, useWaitForTr
 import { parseEther, formatEther, decodeEventLog } from 'viem'
 import { Terminal, Gift, AlertTriangle, ShieldCheck, Zap, Loader2, Coins, Layers, ExternalLink } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
-import { usePaymaster } from '../hooks/usePaymaster.js'
 import { topics } from '../data/topics.js'
 import { ACHIEVEMENT_NFT_ABI, LEADERBOARD_ABI, USER_PROGRESS_ABI } from '../contracts/abis.js'
 import { ACHIEVEMENT_NFT_ADDRESS, LEADERBOARD_ADDRESS, USER_PROGRESS_ADDRESS } from '../contracts/addresses.js'
 import TopicDetail from './RightPanel/TopicDetail'
+
+// Inline paymaster check to avoid TDZ circular import issues
+function useSafePaymaster() {
+  const { address, isConnected } = useAccount()
+  const { data: isPremium } = useReadContract({
+    address: '0x094dd9d6b7d729f14e218728680f058b9949abe3',
+    abi: [{ type: 'function', name: 'isPremium', inputs: [{ name: '', type: 'address' }], outputs: [{ type: 'bool' }], stateMutability: 'view' }],
+    functionName: 'isPremium',
+    args: address ? [address] : undefined,
+    query: { enabled: isConnected && !!address },
+  })
+  return { isPremium: Boolean(isConnected && isPremium), paymasterReady: false, bundlerAvailable: false, paymasterAddress: '' }
+}
 
 export default function RightPanel() {
   const { t } = useTranslation()
   const { selectedTopic, moduleCompleted, completeModule, walletAddress, isDemoMode, completedSteps, stepResults, currentStep, topicSteps } = useApp()
   const consoleRef = useRef(null)
 
-  const { isPremium, paymasterReady, bundlerAvailable, paymasterAddress } = usePaymaster()
+  const { isPremium, paymasterReady, bundlerAvailable, paymasterAddress } = useSafePaymaster()
 
   useEffect(() => {
     if (consoleRef.current) consoleRef.current.scrollTop = consoleRef.current.scrollHeight

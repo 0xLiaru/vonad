@@ -1,7 +1,9 @@
 ﻿import { useCallback, useEffect, useState } from 'react'
-import { AppProvider, useApp } from './context/AppContext'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { ToastProvider } from './components/Toast'
+import { AppProvider, useApp } from './context/AppContext'
+import { monadTestnet } from './config/wagmi.js'
+import { isOnboardingDone, markOnboardingDone } from './utils/onboarding.js'
 import Header from './components/Header'
 import LeftPanel from './components/LeftPanel'
 import Workspace from './components/Workspace'
@@ -12,8 +14,6 @@ import ShareModal from './components/ShareModal'
 import HomePage from './components/HomePage'
 import LeaderboardPage from './components/LeaderboardPage'
 import OnboardingModal from './components/OnboardingModal'
-import { isOnboardingDone, markOnboardingDone } from './utils/onboarding.js'
-import { monadTestnet } from './config/wagmi.js'
 
 function AppContent() {
   const {
@@ -59,11 +59,8 @@ function AppContent() {
           </button>
         </div>
       )}
-
       <div className="flex-1 flex min-h-0">
-        {showHomePage ? (
-          <HomePage />
-        ) : (
+        {showHomePage ? <HomePage /> : (
           <>
             <div className="hidden sm:block"><LeftPanel /></div>
             <Workspace />
@@ -71,7 +68,6 @@ function AppContent() {
           </>
         )}
       </div>
-
       <PremiumModal open={showPremiumModal} onClose={() => setShowPremiumModal(false)} onSuccess={handlePremiumSuccess} />
       <AccountPage open={showAccount} onClose={() => setShowAccount(false)} />
       <ShareModal open={showShareModal} onClose={() => setShowShareModal(false)} data={shareData} />
