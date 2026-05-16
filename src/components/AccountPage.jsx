@@ -361,7 +361,7 @@ function ProgressSection({ address }) {
                     <span className="text-slate-500">{completed}/{moduleCount}</span>
                   </div>
                   <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-700"
+                    <div className="h-full bg-gradient-to-r bg-slate-700 hover:bg-slate-600 rounded-full transition-all duration-700"
                       style={{ width: `${pct}%` }} />
                   </div>
                 </div>
@@ -491,6 +491,7 @@ function AdminCard({ icon, label, value }) {
     </div>
   )
 }
+
 
 
 

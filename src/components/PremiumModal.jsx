@@ -142,7 +142,7 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
                 <button
                   onClick={handlePurchase}
                   disabled={!address}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium text-sm hover:from-purple-600 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r bg-slate-700 hover:bg-slate-600 text-white font-medium text-sm hover:from-purple-600 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {address ? 'Confirm & Pay' : 'Connect wallet'}
                 </button>
@@ -188,4 +188,5 @@ export default function PremiumModal({ open, onClose, onSuccess }) {
     </>
   )
 }
+
 

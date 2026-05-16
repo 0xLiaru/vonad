@@ -130,7 +130,7 @@ function ConsoleOutput({ consoleRef, selectedTopic, completedSteps, stepResults,
           <div className="mt-3 pt-3 border-t border-slate-700/30">
             <div className="text-yellow-400/90 text-xs mb-2">Tum Steplar Done!</div>
             <button onClick={completeModule}
-              className="w-full px-3 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-medium hover:from-purple-600 hover:to-blue-600">
+              className="w-full px-3 py-2 rounded-lg bg-gradient-to-r bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium hover:from-purple-600 hover:to-blue-600">
               <Gift size={12} className="inline mr-1" />
               {isDemoMode ? 'Complete Module' : 'Complete & Earn NFT'}
             </button>
@@ -199,10 +199,11 @@ function MintAction({ topicKey, address, setShowShareModal, setShareData, setSho
       <div className="text-yellow-400/90 text-xs">Modul Done!</div>
       <div className="text-slate-400 text-[10px]">NFT mint ({feeNumeric} MON)</div>
       <button onClick={() => writeContract({ address: ACHIEVEMENT_NFT_ADDRESS, abi: ACHIEVEMENT_NFT_ABI, functionName: 'mintAchievement', args: [address, moduleName, topicKey], value: mintFee || parseEther('0.001') })}
-        className="w-full px-3 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs font-medium hover:from-yellow-600 hover:to-orange-600">
+        className="w-full px-3 py-2 rounded-lg bg-gradient-to-r bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium hover:from-yellow-600 hover:to-orange-600">
         <Coins size={12} className="inline mr-1" />Earn NFT
       </button>
     </div>
   )
 }
+
 

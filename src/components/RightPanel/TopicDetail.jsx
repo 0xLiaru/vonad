@@ -77,7 +77,7 @@ export default function TopicDetail() {
                 key={i}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-800/30 text-slate-400 text-xs"
               >
-                <span className="w-5 h-5 rounded bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center text-[10px] text-purple-400 font-medium">
+                <span className="w-5 h-5 rounded bg-gradient-to-br bg-slate-700/30 flex items-center justify-center text-[10px] text-purple-400 font-medium">
                   {i + 1}
                 </span>
                 {mod}
@@ -89,6 +89,7 @@ export default function TopicDetail() {
     </div>
   )
 }
+
 
 
 

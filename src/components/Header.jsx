@@ -34,7 +34,7 @@ export default function Header() {
     <header className="h-14 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0 relative z-50">
       {/* Logo */}
       <button onClick={() => setShowHomePage(true)} className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
-        <div className="w-8 h-8 rounded-lg overflow-hidden">
+        <div className="w-8 h-8 rounded-lg overflow-hidden bg-slate-800 border border-slate-600">
           <img src="/logo.svg" alt="Vonad" className="w-full h-full" />
         </div>
         <span className="text-white font-semibold text-sm hidden sm:inline">{t('app.title')}</span>

@@ -325,7 +325,7 @@ export default function Workspace() {
           <div className="flex items-center gap-2">
             {allDone && !moduleCompleted && (
               <button onClick={completeModule}
-                className="text-xs px-4 py-1.5 rounded-md bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium hover:from-purple-600 hover:to-blue-600 transition-all">
+                className="text-xs px-4 py-1.5 rounded-md bg-gradient-to-r bg-slate-700 hover:bg-slate-600 text-white font-medium hover:from-purple-600 hover:to-blue-600 transition-all">
                 Complete Module
               </button>
             )}
@@ -335,4 +335,5 @@ export default function Workspace() {
     </main>
   )
 }
+
 

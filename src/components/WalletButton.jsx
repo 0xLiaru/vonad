@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { Wallet, LogOut, ChevronDown, Circle } from 'lucide-react'
 
@@ -74,7 +74,7 @@ export default function WalletButton() {
       <button
         onClick={() => setOpen(!open)}
         disabled={isPending}
-        className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm font-medium hover:from-purple-600 hover:to-blue-600 transition-all disabled:opacity-50"
+        className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-gradient-to-r bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium hover:from-purple-600 hover:to-blue-600 transition-all disabled:opacity-50"
       >
         <Wallet size={14} />
         {isPending ? 'Bağlanıyor...' : 'Cüzdan Bağla'}
@@ -109,3 +109,4 @@ export default function WalletButton() {
     </div>
   )
 }
+

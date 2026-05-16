@@ -36,7 +36,7 @@ function HeroSection({ lang, isConnected, selectTopic }) {
           : 'Learn blockchain concepts with drag-and-drop blocks and practice with simulations.'}
       </p>
       <button onClick={() => selectTopic('Wallet')}
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium text-sm hover:from-purple-600 hover:to-blue-600 transition-all shadow-lg shadow-purple-500/20">
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r bg-slate-700 hover:bg-slate-600 text-white font-medium text-sm hover:from-purple-600 hover:to-blue-600 transition-all shadow-lg shadow-slate-500/10">
         {lang === 'tr' ? 'Hemen Basla' : 'Get Started'} <ArrowRight size={16} />
       </button>
     </div>
@@ -131,6 +131,7 @@ function TopicCard({ topicKey, lang, selectTopic, isFree = false }) {
     </button>
   )
 }
+
 
 
 

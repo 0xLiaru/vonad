@@ -108,7 +108,7 @@ function PaletteBlock({ block }) {
       {...attributes}
       className={`flex flex-col items-center gap-2 p-4 rounded-xl cursor-grab active:cursor-grabbing transition-all border-2 min-w-[180px] ${
         isDragging
-          ? 'bg-purple-500/20 border-purple-500 shadow-lg shadow-purple-500/10 scale-105'
+          ? 'bg-purple-500/20 border-purple-500 shadow-lg  scale-105'
           : 'bg-slate-800/50 border-slate-700/30 hover:border-blue-500/40 hover:bg-slate-700/50'
       }`}
     >
@@ -120,6 +120,7 @@ function PaletteBlock({ block }) {
     </div>
   )
 }
+
 
 
 
