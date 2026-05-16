@@ -285,8 +285,8 @@ export default function Workspace() {
 
       {selectedTopic && (
         <div className="h-10 border-t border-slate-700/30 flex items-center justify-between px-4 bg-slate-900/30 shrink-0">
-          <span className="text-slate-500 text-xs">
-            Tamamlanan: {completedSteps.length} / {topicSteps.length}
+          <span className="text-white font-semibold text-xs">
+            {completedSteps.length} / {topicSteps.length} tamamlandi
           </span>
           <div className="flex items-center gap-2">
             {allDone && !moduleCompleted && (

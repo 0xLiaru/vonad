@@ -30,7 +30,7 @@ function HeroSection({ lang, isConnected, selectTopic }) {
         <Zap size={12} /> Monad Testnet
       </div>
       <h1 className="text-3xl font-bold text-white">{lang === 'tr' ? "Web3'u Bloklarla Ogren" : 'Learn Web3 with Blocks'}</h1>
-      <p className="text-slate-400 max-w-lg mx-auto text-sm leading-relaxed">
+      <p className="text-slate-200 max-w-lg mx-auto text-sm leading-relaxed">
         {lang === 'tr'
           ? 'Blockchain kavramlarini surukle-birak bloklarla ogrenin, simulasyonlarla pratik yapin.'
           : 'Learn blockchain concepts with drag-and-drop blocks and practice with simulations.'}
@@ -68,7 +68,7 @@ function ComparisonSection({ lang }) {
           <tbody>
             {features.map((f, i) => (
               <tr key={i} className="border-b border-slate-700/20">
-                <td className="py-2 text-slate-300 text-xs">{f.label}</td>
+                <td className="py-2 text-white text-xs">{f.label}</td>
                 <td className="text-center py-2">{f.free ? <Check size={13} className="text-green-400 mx-auto" /> : <Lock size={11} className="text-slate-600 mx-auto" />}</td>
                 <td className="text-center py-2">{f.premium ? <Check size={13} className="text-purple-400 mx-auto" /> : <Lock size={11} className="text-slate-600 mx-auto" />}</td>
               </tr>
@@ -89,7 +89,7 @@ function TopicsSection({ lang, selectTopic }) {
       <h2 className="text-lg font-bold text-white text-center mb-4">{lang === 'tr' ? 'Tum Konular' : 'All Topics'}</h2>
       <div className="space-y-5">
         <div>
-          <h3 className="text-green-400 text-xs font-medium uppercase tracking-wider mb-2 flex items-center gap-1.5"><Shield size={12} />{lang === 'tr' ? 'Ucretsiz' : 'Free'}</h3>
+          <h3 className="text-green-300 text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5"><Shield size={12} />{lang === 'tr' ? 'Ucretsiz' : 'Free'}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {freeTopics.map((key) => <TopicCard key={key} topicKey={key} lang={lang} selectTopic={selectTopic} isFree />)}
           </div>
@@ -118,8 +118,8 @@ function TopicCard({ topicKey, lang, selectTopic, isFree = false }) {
       <div className="flex items-center gap-2.5">
         <Icon size={18} className={isFree ? 'text-green-400' : 'text-purple-400 shrink-0'} />
         <div className="min-w-0 flex-1">
-          <span className="text-white text-sm font-medium block truncate">{topic.name[lang]}</span>
-          <p className="text-slate-500 text-[11px] truncate">{topic.shortDesc[lang]}</p>
+          <span className="text-white text-sm font-semibold block truncate">{topic.name[lang]}</span>
+          <p className="text-slate-300 text-[11px] truncate">{topic.shortDesc[lang]}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
