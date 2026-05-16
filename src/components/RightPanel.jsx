@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount, useBalance, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther, formatEther, decodeEventLog } from 'viem'
 import { Terminal, Gift, AlertTriangle, ShieldCheck, Zap, Loader2, Coins, Layers, ExternalLink } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
@@ -86,7 +86,7 @@ function ConsoleOutput({ consoleRef, selectedTopic, completedSteps, stepResults,
         )}
 
         {balance && (
-          <div className="text-slate-400/80">Bakiye: {Number(formatEther(balance.value)).toFixed(4)} MON</div>
+          <div className="text-slate-400/80">Bakiye: {Number(formatEther(balance.value || 0n)).toFixed(4)} MON</div>
         )}
 
         {/* Step results */}
